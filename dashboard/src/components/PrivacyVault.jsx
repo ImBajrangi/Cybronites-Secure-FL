@@ -16,10 +16,17 @@ export const PrivacyVault = () => {
     const [selectedDataset, setSelectedDataset] = useState(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
+    const [initError, setInitError] = useState(false);
+
     useEffect(() => {
-        fetchDatasets();
-        fetchJobs();
-        fetchModels();
+        const init = async () => {
+            try {
+                await Promise.allSettled([fetchDatasets(), fetchJobs(), fetchModels()]);
+            } catch {
+                setInitError(true);
+            }
+        };
+        init();
     }, [fetchDatasets, fetchJobs, fetchModels]);
 
     const handleLaunch = async () => {
@@ -41,6 +48,29 @@ export const PrivacyVault = () => {
 
     return (
         <div className="vault-container p-10 space-y-12 section-fade bg-white min-h-full">
+            {/* Offline / Error Banner */}
+            {(error || initError) && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-4 p-5 bg-amber-50 border border-amber-200 mb-4"
+                >
+                    <AlertCircle size={16} className="text-amber-600 shrink-0" />
+                    <div className="flex flex-col gap-1">
+                        <span className="text-[11px] font-bold text-amber-800 uppercase tracking-widest">Secure Training Engine Offline</span>
+                        <span className="text-[10px] text-amber-700 leading-relaxed">
+                            The encrypted computation backend (port 8100) is not responding. 
+                            Dataset browsing and training job submission require the Secure Training API to be running.
+                        </span>
+                    </div>
+                    <button 
+                        onClick={() => { setInitError(false); fetchDatasets(); fetchJobs(); fetchModels(); }}
+                        className="ml-auto px-4 py-2 bg-amber-100 border border-amber-300 text-amber-800 text-[9px] font-bold uppercase tracking-widest hover:bg-amber-200 transition-all shrink-0"
+                    >
+                        Retry
+                    </button>
+                </motion.div>
+            )}
             {/* Header: Vault Intelligence */}
             <div className="flex items-end justify-between pb-8 border-b border-border">
                 <div className="space-y-4">

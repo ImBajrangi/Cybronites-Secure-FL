@@ -3,21 +3,15 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 const isProd = import.meta.env.PROD;
 export const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '7880';
 export const BACKEND_IP = import.meta.env.VITE_BACKEND_IP || '127.0.0.1';
-
-// In split-arch (Vercel frontend + HuggingFace backend), VITE_BACKEND_URL must point to HF Space.
-// Hardcoded fallback for Vercel environments to unequivocally specify the HF space
-const _rawProdBackend = 'https://rishuuuuuu-cybronites-secure-fl.hf.space';
-const PROD_BACKEND = _rawProdBackend.replace(/\/+$/, '');
-
-export const API_BASE_URL = isProd ? PROD_BACKEND : `http://${BACKEND_IP}:${BACKEND_PORT}`;
-export const WS_URL = isProd 
-  ? `${PROD_BACKEND.replace(/^https?/, (p) => p === 'https' ? 'wss' : 'ws')}/ws`
+export const API_BASE_URL = isProd ? window.location.origin : `http://${BACKEND_IP}:${BACKEND_PORT}`;
+export const WS_URL = isProd
+  ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`
   : `ws://${BACKEND_IP}:${BACKEND_PORT}/ws`;
 
 export function useSecureFederated() {
   const [round, setRound] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [clientsActive, setClientsActive] = useState(0); 
+  const [clientsActive, setClientsActive] = useState(0);
   const [blockchain, setBlockchain] = useState([
     { index: 0, hash: '0x0000_GENESIS', transactions: [] }
   ]);
@@ -37,13 +31,8 @@ export function useSecureFederated() {
   });
   const [roundHistory, setRoundHistory] = useState([]);
   const [shards, setShards] = useState([]); // NEW STATE
-  const [modelArchitecture, setModelArchitecture] = useState('# Loading Model source...'); 
+  const [modelArchitecture, setModelArchitecture] = useState('# Loading Model source...');
   const [labState, setLabState] = useState({ status: 'IDLE', progress: 0, epoch: 0, loss: 0, accuracy: 0, ptPath: null, onnxPath: null });
-  const [distributedStatus, setDistributedStatus] = useState({
-    status: 'IDLE', round: 0, totalRounds: 0, minClients: 1,
-    registeredClients: 0, updatesReceived: 0, updatesNeeded: 1,
-    serverCommand: ''
-  });
 
   const ws = useRef(null);
 
@@ -59,87 +48,94 @@ export function useSecureFederated() {
 
   const onMessage = useCallback((event) => {
     try {
-        const message = JSON.parse(event.data);
-        const { type, payload } = message;
-        setLastSync(new Date());
+      const message = JSON.parse(event.data);
+      const { type, payload } = message;
+      setLastSync(new Date());
 
-        switch (type) {
-          case 'INITIAL_SYNC': {
-            console.log("INITIAL_SYNC", payload);
-            const { state, logs: initialLogs } = payload;
-            setRound(state.round || 0);
-            setStatus(state.status || 'IDLE');
-            setAccuracyHistory(state.accuracy_history || []);
-            setLossHistory(state.loss_history || []);
-            setLogs(initialLogs.map(l => ({ msg: `${l}`, color: '#64748b' })));
-            if (state.chain) setBlockchain(state.chain);
-            if (state.node_registry) setNodeRegistry(state.node_registry);
-            if (state.hyperparams) setHyperparams(state.hyperparams);
-            if (state.round_history) setRoundHistory(state.round_history);
-            if (state.shards) setShards(state.shards);
-            if (state.model_architecture) setModelArchitecture(state.model_architecture);
-            updateClientStatus(state.status, state.clients_active);
-            break;
+      switch (type) {
+        case 'INITIAL_SYNC': {
+          console.log("INITIAL_SYNC", payload);
+          const { state, logs: initialLogs } = payload;
+          setRound(state.round || 0);
+          setStatus(state.status || 'IDLE');
+          setAccuracyHistory(state.accuracy_history || []);
+          setLossHistory(state.loss_history || []);
+          setLogs(initialLogs.map(l => ({ msg: `${l}`, color: '#64748b' })));
+          if (state.chain) setBlockchain(state.chain);
+          if (state.node_registry) setNodeRegistry(state.node_registry);
+          if (state.hyperparams) setHyperparams(state.hyperparams);
+          if (state.round_history) setRoundHistory(state.round_history);
+          if (state.shards) setShards(state.shards);
+          if (state.model_architecture) setModelArchitecture(state.model_architecture);
+          if (state.lab_state) {
+            setLabState(prev => ({ ...prev, ...state.lab_state }));
           }
-
-          case 'STAT_UPDATE': {
-            console.log("STAT_UPDATE", payload);
-            if (payload.round !== undefined) setRound(payload.round);
-            if (payload.status !== undefined) {
-                setStatus(payload.status);
-                setIsActive(['TRAINING', 'AGGREGATING', 'MINING'].includes(payload.status));
-                updateClientStatus(payload.status, payload.clients_active);
-            }
-            if (payload.accuracy_history !== undefined) setAccuracyHistory(payload.accuracy_history);
-            if (payload.loss_history !== undefined) setLossHistory(payload.loss_history);
-            if (payload.chain !== undefined) setBlockchain(payload.chain);
-            if (payload.node_registry !== undefined) setNodeRegistry(payload.node_registry);
-            if (payload.hyperparams) setHyperparams(payload.hyperparams);
-            if (payload.round_history) setRoundHistory(payload.round_history);
-            if (payload.shards) setShards(payload.shards);
-            if (payload.model_architecture) setModelArchitecture(payload.model_architecture);
-            break;
-          }
-
-          case 'LOG': {
-            const isError = payload.includes('ERROR') || payload.includes('CRITICAL');
-            setLogs(prev => [...prev.slice(-199), { msg: `${payload}`, color: isError ? '#ef4444' : '#64748b' }]);
-            break;
-          }
-
-          case 'LAB_PROGRESS': {
-            setLabState(prev => ({ 
-              ...prev, 
-              status: 'TRAINING',
-              progress: payload.progress,
-              epoch: payload.epoch,
-              loss: payload.loss,
-              accuracy: payload.accuracy
-            }));
-            break;
-          }
-
-          case 'LAB_COMPLETE': {
-            setLabState(prev => ({ 
-              ...prev, 
-              status: 'COMPLETE',
-              progress: 100,
-              ptPath: payload.pt_path,
-              onnxPath: payload.onnx_path
-            }));
-            break;
-          }
-
-          case 'LAB_ERROR': {
-            setLabState(prev => ({ ...prev, status: 'ERROR', error: payload.error }));
-            break;
-          }
-
-          default:
-            break;
+          updateClientStatus(state.status, state.clients_active);
+          break;
         }
+
+        case 'STAT_UPDATE': {
+          console.log("STAT_UPDATE", payload);
+          if (payload.round !== undefined) setRound(payload.round);
+          if (payload.status !== undefined) {
+            setStatus(payload.status);
+            setIsActive(['TRAINING', 'AGGREGATING', 'MINING'].includes(payload.status));
+            updateClientStatus(payload.status, payload.clients_active);
+          }
+          if (payload.accuracy_history !== undefined) setAccuracyHistory(payload.accuracy_history);
+          if (payload.loss_history !== undefined) setLossHistory(payload.loss_history);
+          if (payload.chain !== undefined) setBlockchain(payload.chain);
+          if (payload.node_registry !== undefined) setNodeRegistry(payload.node_registry);
+          if (payload.hyperparams) setHyperparams(payload.hyperparams);
+          if (payload.round_history) setRoundHistory(payload.round_history);
+          if (payload.shards) setShards(payload.shards);
+          if (payload.model_architecture) setModelArchitecture(payload.model_architecture);
+          if (payload.lab_state) {
+            setLabState(prev => ({ ...prev, ...payload.lab_state }));
+          }
+          break;
+        }
+
+        case 'LOG': {
+          const isError = payload.includes('ERROR') || payload.includes('CRITICAL');
+          setLogs(prev => [...prev.slice(-199), { msg: `${payload}`, color: isError ? '#ef4444' : '#64748b' }]);
+          break;
+        }
+
+        case 'LAB_PROGRESS': {
+          setLabState(prev => ({
+            ...prev,
+            status: 'TRAINING',
+            progress: payload.progress,
+            epoch: payload.epoch,
+            loss: payload.loss,
+            accuracy: payload.accuracy
+          }));
+          break;
+        }
+
+        case 'LAB_COMPLETE': {
+          setLabState(prev => ({
+            ...prev,
+            status: 'COMPLETE',
+            progress: 100,
+            ptPath: payload.pt_path,
+            onnxPath: payload.onnx_path,
+            mode: payload.mode
+          }));
+          break;
+        }
+
+        case 'LAB_ERROR': {
+          setLabState(prev => ({ ...prev, status: 'ERROR', error: payload.error }));
+          break;
+        }
+
+        default:
+          break;
+      }
     } catch (err) {
-        console.error("Hook Message Error:", err);
+      console.error("Hook Message Error:", err);
     }
   }, [updateClientStatus]);
 
@@ -199,54 +195,31 @@ export function useSecureFederated() {
     }
   };
 
-  // ── Distributed Federated Learning ──
-  const startDistributed = async (numRounds = 5, minClients = 1) => {
+  const executeDashboardCommand = async (command) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/distributed/start`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/shell`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ num_rounds: numRounds, min_clients: minClients })
+        body: JSON.stringify({ command })
       });
-      const data = await response.json();
-      if (data.success) {
-        setDistributedStatus(prev => ({ ...prev, status: 'WAITING', round: 1, totalRounds: numRounds, minClients }));
-      }
-      return data;
+      return await response.json();
     } catch (err) {
-      console.error("Distributed Start Error:", err);
-      return { success: false, error: err.message };
+      console.error("Command Execution Error:", err);
+      return { success: false, error: "Network Error" };
     }
   };
 
-  const stopDistributed = async () => {
+  const evalLaboratoryCode = async (code) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/distributed/stop`, { method: 'POST' });
-      const data = await response.json();
-      setDistributedStatus(prev => ({ ...prev, status: 'IDLE' }));
-      return data;
-    } catch (err) {
-      console.error("Distributed Stop Error:", err);
-      return { success: false };
-    }
-  };
-
-  const refreshDistributedStatus = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/distributed/status`);
-      const data = await response.json();
-      setDistributedStatus({
-        status: data.status || 'IDLE',
-        round: data.round || 0,
-        totalRounds: data.total_rounds || 0,
-        minClients: data.min_clients || 1,
-        registeredClients: data.registered_clients || 0,
-        updatesReceived: data.updates_received || 0,
-        updatesNeeded: data.updates_needed || 1,
-        serverCommand: `python run_client.py --server ${API_BASE_URL} --name "My-Device"`
+      const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/eval`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
       });
-      return data;
+      return await response.json();
     } catch (err) {
-      console.error("Distributed Status Error:", err);
+      console.error("REPL Evaluation Error:", err);
+      return { success: false, error: "Network Error" };
     }
   };
 
@@ -271,12 +244,8 @@ export function useSecureFederated() {
     modelArchitecture,
     shards,
     clientsActive,
-    labState,
-    // Distributed Mode
-    distributedStatus,
-    startDistributed,
-    stopDistributed,
-    refreshDistributedStatus,
-    API_BASE_URL,
+    executeDashboardCommand,
+    evalLaboratoryCode,
+    labState
   };
 }

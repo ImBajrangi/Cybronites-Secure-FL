@@ -36,7 +36,7 @@ export const useSecureTraining = () => {
              // Backend returns { count: X, jobs: [...] }
             setJobs(Array.isArray(data.jobs) ? data.jobs : []);
         } catch (err) {
-            console.error(err);
+            setError(prev => prev || err.message);
         }
     }, []);
 
@@ -48,7 +48,7 @@ export const useSecureTraining = () => {
             // Backend returns list directly for models
             setModels(Array.isArray(data) ? data : (data.models || []));
         } catch (err) {
-            console.error(err);
+            setError(prev => prev || err.message);
         }
     }, []);
 

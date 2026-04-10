@@ -217,11 +217,12 @@ export const ArchitectureBuilder = ({ onAction }) => {
           {/* Presets */}
           <div className="arch-lib-section">
             <span className="arch-lib-section-title">Model Presets</span>
-            {libraryTemplates.map(t => (
-              <button key={t.id} onClick={() => applyTemplate(t)} className="arch-preset-btn">
-                <span className="arch-preset-name">{t.name}</span>
-                <span className="arch-preset-info">Nodes: {Object.keys(t.nodes).length}</span>
-              </button>
+            {libraryTemplates.map(temp => (
+              <div className={`arch-preset-btn ${search && temp.name.toLowerCase().includes(search.toLowerCase()) ? 'highlight' : ''}`} key={temp.id} onClick={() => applyTemplate(temp)}>
+                <div className="arch-badge-dot"></div>
+                <span className="arch-preset-name">{temp.name}</span>
+                <span className="arch-preset-info">Nodes: {Object.keys(temp.nodes).length}</span>
+              </div>
             ))}
           </div>
 
@@ -288,7 +289,9 @@ export const ArchitectureBuilder = ({ onAction }) => {
                 onDragEnd={handleDragEnd}
                 onPortClick={handlePortClick}
                 onDelete={deleteNode}
-              />
+              >
+                {activeNode === key && <div className="arch-node-dot"></div>}
+              </LayerNode>
             ))}
           </motion.div>
         </div>
@@ -360,12 +363,12 @@ export const ArchitectureBuilder = ({ onAction }) => {
 
             {/* Compile Button */}
             <div className="arch-insp-footer">
-              <button onClick={compileModel} disabled={isCompiling} className="arch-compile-btn">
-                {isCompiling ? (
-                  <><div className="arch-spinner" /> Compiling...</>
-                ) : (
-                  <><Zap size={14} /> Compile Architecture</>
-                )}
+              <button 
+                onClick={() => compileModel()}
+                disabled={isCompiling}
+                className="arch-compile-btn"
+              >
+                {isCompiling ? <><div className="arch-spinner"></div> Compiling...</> : <><Zap size={14} /> Compile Architecture</>}
               </button>
             </div>
           </motion.aside>

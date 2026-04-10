@@ -4,6 +4,7 @@ __pycache__/
 .localStorage
 venv/
 venv_mac/
+venv_root/
 node_modules/
 *.zip
 *.db

@@ -1,38 +1,55 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Code, Play, ShieldCheck, Terminal, Zap, 
-  AlertCircle, RefreshCw, Download, BarChart2, 
-  Activity, Settings, CheckCircle2, StopCircle, Cpu
+import {
+  Code, Play, ShieldCheck, Terminal, Zap,
+  AlertCircle, RefreshCw, Download, BarChart2,
+  Activity, Settings, CheckCircle2, StopCircle, Cpu, Box,
+  ChevronRight, Package, Loader2
 } from 'lucide-react';
 import { API_BASE_URL } from '../hooks/useSecureFederated';
 
-const DEFAULT_MODEL_CODE = `import torch
+const DEFAULT_MODEL_CODE = `# Federated Learning - Institutional Sandbox v1.5
+# ----------------------------------------------
+# Type '!pip install [package]' to add libraries.
+# Type '!ls' to scout the filesystem.
+# ----------------------------------------------
+
+import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+import matplotlib.pyplot as plt
+import numpy as np
 
-class MNISTNet(nn.Module):
-    """
-    Institutional Model Architecture
-    Define your layers and forward pass below.
-    """
-    def __init__(self):
-        super(MNISTNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, 10)
+# -- - Standard Implementation-- -
 
-    def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2(x), 2))
-        x = x.view(-1, 320)
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return F.log_softmax(x, dim=1)
+class SecureNodeModel(nn.Module):
+  def __init__(self):
+    super(SecureNodeModel, self).__init__()
+    self.conv1 = nn.Conv2d(1, 32, 3, 1)
+    self.conv2 = nn.Conv2d(32, 64, 3, 1)
+    self.dropout1 = nn.Dropout(0.25)
+    self.fc1 = nn.Linear(9216, 128)
+    self.fc2 = nn.Linear(128, 10)
+
+  def forward(self, x):
+    x = torch.relu(self.conv1(x))
+    x = torch.relu(self.conv2(x))
+    x = torch.max_pool2d(x, 2)
+    x = self.dropout1(x)
+    x = torch.flatten(x, 1)
+    x = torch.relu(self.fc1(x))
+    return self.fc2(x)
+
+  def train(epochs = 5, lr = 0.01, batch_size = 32):
+    # Dummy function for AST detection
+    pass
+
+print("🧪 Federated Sandbox Ready.")
 `;
 
-export const Laboratory = ({ onAction, labState }) => {
+export default function Laboratory({ onAction, labState, onExecuteCommand, onEvalCode }) {
   const [code, setCode] = useState(DEFAULT_MODEL_CODE);
   const [status, setStatus] = useState('IDLE');
   const [logs, setLogs] = useState([]);
@@ -43,6 +60,68 @@ export const Laboratory = ({ onAction, labState }) => {
   const [epochs, setEpochs] = useState(5);
   const [lr, setLr] = useState(0.001);
   const [batchSize, setBatchSize] = useState(32);
+  const [envData, setEnvData] = useState(null);
+  const [isEnvLoading, setIsEnvLoading] = useState(false);
+  const [detectedDeps, setDetectedDeps] = useState([]);
+  const [neededParams, setNeededParams] = useState([
+    { name: 'epochs', value: 5, lineno: null },
+    { name: 'lr', value: 0.001, lineno: null },
+    { name: 'batch_size', value: 32, lineno: null }
+  ]);
+  const [isInspecting, setIsInspecting] = useState(false);
+  const [isDeepScan, setIsDeepScan] = useState(false);
+  const [isLiveSyncEnabled, setIsLiveSyncEnabled] = useState(true);
+  const [syncingLines, setSyncingLines] = useState([]); // Track lines being updated
+
+  // Terminal State
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalHistory, setTerminalHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const terminalRef = useRef(null);
+
+  // Package Installation State
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [installingPackages, setInstallingPackages] = useState([]);
+  const [installProgress, setInstallProgress] = useState(0);
+  const [installLogs, setInstallLogs] = useState([]);
+
+  const runPipInstall = async (packages) => {
+    const pkgList = Array.isArray(packages) ? packages : [packages];
+    setIsInstalling(true);
+    setInstallingPackages(pkgList);
+    setInstallProgress(0);
+    setInstallLogs([{ msg: `$ pip install ${pkgList.join(' ')}`, type: 'cmd' }]);
+
+    for (let i = 0; i < pkgList.length; i++) {
+      const pkg = pkgList[i];
+      setInstallLogs(prev => [...prev, { msg: `Collecting ${pkg}...`, type: 'info' }]);
+      setInstallProgress(Math.round(((i) / pkgList.length) * 60));
+
+      try {
+        await onExecuteCommand(`!pip install ${pkg}`);
+        setInstallLogs(prev => [...prev,
+        { msg: `  Downloading ${pkg}...`, type: 'info' },
+        { msg: `  Installing collected packages: ${pkg}`, type: 'info' },
+        { msg: `Successfully installed ${pkg}`, type: 'success' }
+        ]);
+      } catch {
+        setInstallLogs(prev => [...prev, { msg: `ERROR: Failed to install ${pkg}`, type: 'error' }]);
+      }
+      setInstallProgress(Math.round(((i + 1) / pkgList.length) * 100));
+    }
+
+    setInstallLogs(prev => [...prev, { msg: `\n✓ Installation complete. ${pkgList.length} package(s) processed.`, type: 'success' }]);
+    addLog(`Installed ${pkgList.length} package(s): ${pkgList.join(', ')}`, 'success');
+
+    // Refresh environment after install
+    setTimeout(() => {
+      fetchEnvironment();
+      setIsInstalling(false);
+      setInstallingPackages([]);
+      setInstallProgress(0);
+    }, 1500);
+  };
 
   const addLog = (msg, type = 'info') => {
     setLogs(prev => [{ msg, type, time: new Date().toLocaleTimeString() }, ...prev].slice(0, 50));
@@ -57,19 +136,163 @@ export const Laboratory = ({ onAction, labState }) => {
     textarea.addEventListener('scroll', handleScroll);
     return () => textarea.removeEventListener('scroll', handleScroll);
   }, []);
-
   useEffect(() => {
     if (!labState) return;
     if (labState.status === 'TRAINING') {
       setStatus('TRAINING');
     } else if (labState.status === 'COMPLETE') {
       setStatus('COMPLETE');
-      addLog('Training session finalized. Model prepared for download.', 'success');
     } else if (labState.status === 'ERROR') {
       setStatus('ERROR');
-      addLog(`Training Error: ${labState.error}`, 'error');
+      addLog(`Backend Error: ${labState.error} `, 'error');
     }
   }, [labState]);
+
+  const fetchEnvironment = async () => {
+    setIsEnvLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/environment`);
+      const data = await response.json();
+      setEnvData(data);
+    } catch (err) {
+      console.error("Failed to fetch environment:", err);
+    } finally {
+      setIsEnvLoading(false);
+    }
+  };
+
+  const inspectDependencies = async () => {
+    if (!code.trim()) {
+      setDetectedDeps([]);
+      return;
+    }
+    setIsInspecting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/inspect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setDetectedDeps(data.dependencies);
+        if (data.parameters && data.parameters.length > 0) {
+          setNeededParams(data.parameters);
+
+          // Sync state values to detected code values if they differ
+          data.parameters.forEach(p => {
+            if (p.value !== null) {
+              if (p.name === 'epochs') setEpochs(p.value);
+              if (p.name === 'lr') setLr(p.value);
+              if (p.name === 'batch_size') setBatchSize(p.value);
+            }
+          });
+        } else if (code.trim()) {
+          setNeededParams([]);
+        }
+      }
+    } catch (err) {
+      console.error("Dependency inspection failed:", err);
+    } finally {
+      setIsInspecting(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEnvironment();
+    const interval = setInterval(fetchEnvironment, 45000); // 🧪 Reduced polling frequency as requested
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🧪 Auto-Cleanup on browser close
+  useEffect(() => {
+    const cleanup = () => {
+      navigator.sendBeacon(`${API_BASE_URL}/api/v1/laboratory/purge`);
+    };
+    window.addEventListener('beforeunload', cleanup);
+    return () => window.removeEventListener('beforeunload', cleanup);
+  }, []);
+
+  // Debounced inspection
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      inspectDependencies();
+    }, 600); // 🧪 Accelerated from 2000ms for High-Frequency Sync
+    return () => clearTimeout(timer);
+  }, [code]);
+
+  const syncParamToSource = (paramName, newValue) => {
+    if (!isLiveSyncEnabled) return;
+
+    const param = neededParams.find(p => p.name === paramName);
+    if (!param || !param.lineno) return;
+
+    const lines = code.split('\n');
+    const lineIndex = param.lineno - 1;
+    const line = lines[lineIndex];
+
+    if (line) {
+      // Robust regex for variable assignment/dictionary mapping
+      // Captures group 1 (everything up to the value) and follows with the numeric value
+      const regex = new RegExp(`(${paramName}[^\\n]*?[:=]\\s*)([0-9\\.e\\-]+)`, 'i');
+      if (regex.test(line)) {
+        lines[lineIndex] = line.replace(regex, `$1${newValue}`);
+        setCode(lines.join('\n'));
+
+        // Trigger visual sync indicator
+        setSyncingLines(prev => [...new Set([...prev, param.lineno])]);
+        setTimeout(() => {
+          setSyncingLines(prev => prev.filter(l => l !== param.lineno));
+        }, 1200);
+      }
+    }
+  };
+
+  const pushParamToSource = (paramName, newValue) => {
+    const param = neededParams.find(p => p.name === paramName);
+    if (!param || !param.lineno) return;
+
+    const lines = code.split('\n');
+    const lineIndex = param.lineno - 1;
+    const line = lines[lineIndex];
+
+    if (line) {
+      const regex = new RegExp(`(${paramName}[^\\n]*?[:=]\\s*)([0-9\\.e\\-]+)`, 'i');
+      if (regex.test(line)) {
+        lines[lineIndex] = line.replace(regex, `$1${newValue}`);
+        setCode(lines.join('\n'));
+        addLog(`Pushed ${paramName}=${newValue} to source line ${param.lineno}.`, 'success');
+
+        setSyncingLines(prev => [...new Set([...prev, param.lineno])]);
+        setTimeout(() => {
+          setSyncingLines(prev => prev.filter(l => l !== param.lineno));
+        }, 1200);
+      }
+    }
+  };
+
+  const handleParamChange = (name, value, setter) => {
+    setter(value);
+    if (isLiveSyncEnabled) {
+      syncParamToSource(name, value);
+    }
+  };
+
+  const handlePurgeSandbox = async () => {
+    if (!window.confirm("🧺 LIQUIDATE RESOURCE? This will delete all installed libraries in the sandbox to reclaim disk space. You will need to wait for a warm-up on next execution.")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/purge`, { method: 'POST' });
+      const data = await response.json();
+      if (data.success) {
+        addLog("Sandbox resources liquidated successfully.", "warning");
+        fetchEnvironment(); // Refresh env status
+      } else {
+        addLog(data.error || "Purge failed.", "error");
+      }
+    } catch (err) {
+      addLog("Failed to connect to liquidation engine.", "error");
+    }
+  };
 
   const handleCompile = async () => {
     setStatus('COMPILING');
@@ -88,7 +311,7 @@ export const Laboratory = ({ onAction, labState }) => {
       } else {
         setStatus('ERROR');
         setErrorLine(data.line || null);
-        addLog(`[${data.type || 'Error'}] Line ${data.line || '?'}: ${data.error}`, 'error');
+        addLog(`[${data.type || 'Error'}] Line ${data.line || '?'}: ${data.error} `, 'error');
       }
     } catch (err) {
       setStatus('ERROR');
@@ -102,7 +325,7 @@ export const Laboratory = ({ onAction, labState }) => {
       return;
     }
     setStatus('TRAINING');
-    addLog(`Starting training (Epochs: ${epochs}, LR: ${lr}, Batch: ${batchSize})...`, 'info');
+    addLog(`Starting training(Epochs: ${epochs}, LR: ${lr}, Batch: ${batchSize})...`, 'info');
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/train`, {
         method: 'POST',
@@ -112,7 +335,7 @@ export const Laboratory = ({ onAction, labState }) => {
       const data = await response.json();
       if (!data.success) {
         setStatus('ERROR');
-        addLog(`Failed to start training: ${data.message}`, 'error');
+        addLog(`Failed to start training: ${data.message} `, 'error');
       }
     } catch (err) {
       setStatus('ERROR');
@@ -132,24 +355,72 @@ export const Laboratory = ({ onAction, labState }) => {
 
   const handleDownload = (format) => {
     window.open(`${API_BASE_URL}/api/v1/laboratory/download/${format}`, '_blank');
-    addLog(`Initiating ${format.toUpperCase()} model download...`, 'info');
+  };
+
+  const handleTerminalSubmit = async (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const cmd = terminalInput.trim();
+      if (!cmd) return;
+
+      setIsEvaluating(true);
+      setTerminalHistory(prev => [cmd, ...prev]);
+      setHistoryIndex(-1);
+
+      addLog(cmd, 'user'); // Distinguished User Echo
+
+      try {
+        if (cmd.startsWith('!')) {
+          await onExecuteCommand(cmd);
+        } else {
+          const result = await onEvalCode(cmd);
+          if (result && !result.success && result.error) {
+            addLog(`❌ Error: ${result.error}`, 'error');
+          }
+        }
+        setTerminalInput('');
+        // Scroll console to bottom
+        setTimeout(() => {
+          if (terminalRef.current) terminalRef.current.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } catch (err) {
+        onAction('Evaluation failed. Session may be dead.', 'error');
+      } finally {
+        setIsEvaluating(false);
+      }
+    } else if (e.key === 'ArrowUp') {
+      if (historyIndex < terminalHistory.length - 1) {
+        const nextIdx = historyIndex + 1;
+        setHistoryIndex(nextIdx);
+        setTerminalInput(terminalHistory[nextIdx]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      if (historyIndex > 0) {
+        const nextIdx = historyIndex - 1;
+        setHistoryIndex(nextIdx);
+        setTerminalInput(terminalHistory[nextIdx]);
+      } else {
+        setHistoryIndex(-1);
+        setTerminalInput('');
+      }
+    }
   };
 
   const lineCount = code.split('\n').length;
   const lineNumbers = Array.from({ length: Math.max(lineCount, 30) }, (_, i) => i + 1);
   const progress = labState?.progress || 0;
 
-  const statusColor = status === 'READY' || status === 'COMPLETE' ? 'var(--success)' 
-    : status === 'ERROR' ? 'var(--error)' 
-    : status === 'TRAINING' ? 'var(--accent)' 
-    : 'var(--text-muted)';
+  const statusColor = status === 'READY' || status === 'COMPLETE' ? 'var(--success)'
+    : status === 'ERROR' ? 'var(--error)'
+      : status === 'TRAINING' ? 'var(--accent)'
+        : 'var(--text-muted)';
 
   const statusLabel = {
     IDLE: 'Awaiting Input',
     COMPILING: 'Validating...',
     READY: 'Architecture Verified',
-    TRAINING: `Training — Epoch ${labState?.epoch || 0}/${epochs}`,
-    COMPLETE: 'Training Complete',
+    TRAINING: labState?.mode === 'SCRIPT' ? 'Executing standalone script...' : `Training — Epoch ${labState?.epoch || 0}/${epochs}`,
+    COMPLETE: labState?.mode === 'SCRIPT' ? 'Execution Complete' : 'Federated Training Complete',
     ERROR: 'Exception Raised'
   }[status] || status;
 
@@ -203,7 +474,7 @@ export const Laboratory = ({ onAction, labState }) => {
       {/* ─── Progress Strip (only during training/complete) ─── */}
       <AnimatePresence>
         {(status === 'TRAINING' || status === 'COMPLETE') && (
-          <motion.div 
+          <motion.div
             className="lab-progress-strip"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -211,7 +482,7 @@ export const Laboratory = ({ onAction, labState }) => {
             transition={{ duration: 0.3 }}
           >
             <div className="lab-progress-bar-track">
-              <motion.div 
+              <motion.div
                 className="lab-progress-bar-fill"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -219,18 +490,22 @@ export const Laboratory = ({ onAction, labState }) => {
               />
             </div>
             <div className="lab-progress-stats">
-              <div className="lab-stat">
-                <span className="lab-stat-label">Epoch</span>
-                <span className="lab-stat-value">{labState?.epoch || 0}/{epochs}</span>
-              </div>
-              <div className="lab-stat">
-                <span className="lab-stat-label">Loss</span>
-                <span className="lab-stat-value lab-stat-loss">{(labState?.loss || 0).toFixed(4)}</span>
-              </div>
-              <div className="lab-stat">
-                <span className="lab-stat-label">Accuracy</span>
-                <span className="lab-stat-value lab-stat-acc">{((labState?.accuracy || 0) * 100).toFixed(2)}%</span>
-              </div>
+              {labState?.mode !== 'SCRIPT' && (
+                <>
+                  <div className="lab-stat">
+                    <span className="lab-stat-label">Epoch</span>
+                    <span className="lab-stat-value">{labState?.epoch || 0}/{epochs}</span>
+                  </div>
+                  <div className="lab-stat">
+                    <span className="lab-stat-label">Loss</span>
+                    <span className="lab-stat-value lab-stat-loss">{(labState?.loss || 0).toFixed(4)}</span>
+                  </div>
+                  <div className="lab-stat">
+                    <span className="lab-stat-label">Accuracy</span>
+                    <span className="lab-stat-value lab-stat-acc">{((labState?.accuracy || 0) * 100).toFixed(2)}%</span>
+                  </div>
+                </>
+              )}
               <div className="lab-stat">
                 <span className="lab-stat-label">Progress</span>
                 <span className="lab-stat-value">{progress.toFixed(0)}%</span>
@@ -247,14 +522,25 @@ export const Laboratory = ({ onAction, labState }) => {
           <div className="lab-editor-wrap">
             {/* Gutter */}
             <div className="lab-gutter" ref={gutterRef}>
-              {lineNumbers.map(num => (
-                <div
-                  key={num}
-                  className={`lab-gutter-line ${errorLine === num ? 'lab-gutter-error' : ''}`}
-                >
-                  {num}
-                </div>
-              ))}
+              {lineNumbers.map(num => {
+                const isSyncing = syncingLines.includes(num);
+                return (
+                  <div
+                    key={num}
+                    className={`lab-gutter-line ${errorLine === num ? 'lab-gutter-error' : ''} ${isSyncing ? 'lab-gutter-syncing' : ''}`}
+                  >
+                    {isSyncing ? (
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="lab-sync-indicator"
+                      >
+                        <Zap size={8} />
+                      </motion.div>
+                    ) : num}
+                  </div>
+                );
+              })}
             </div>
             {/* Textarea */}
             <textarea
@@ -267,73 +553,404 @@ export const Laboratory = ({ onAction, labState }) => {
               spellCheck={false}
               className="lab-textarea"
             />
+
+            {/* 🪄 Smart Shell Command Detector — validates real packages */}
+            <AnimatePresence>
+            {(() => {
+              const KNOWN_PACKAGES = [
+                'numpy', 'pandas', 'scipy', 'matplotlib', 'seaborn', 'plotly', 'bokeh',
+                'scikit-learn', 'sklearn', 'xgboost', 'lightgbm', 'catboost',
+                'torch', 'torchvision', 'torchaudio', 'pytorch-lightning',
+                'tensorflow', 'keras', 'jax', 'jaxlib', 'flax',
+                'transformers', 'datasets', 'tokenizers', 'accelerate', 'diffusers',
+                'opencv-python', 'cv2', 'pillow', 'imageio', 'albumentations',
+                'flask', 'fastapi', 'uvicorn', 'django', 'requests', 'httpx', 'aiohttp',
+                'sqlalchemy', 'psycopg2', 'pymongo', 'redis', 'celery',
+                'pytest', 'unittest', 'coverage', 'black', 'flake8', 'mypy', 'ruff',
+                'tqdm', 'rich', 'click', 'typer', 'pydantic', 'attrs',
+                'networkx', 'sympy', 'statsmodels', 'lifelines',
+                'nltk', 'spacy', 'gensim', 'textblob', 'langchain',
+                'openai', 'anthropic', 'cohere', 'replicate',
+                'wandb', 'mlflow', 'optuna', 'ray', 'dask',
+                'jupyter', 'ipython', 'notebook', 'jupyterlab',
+                'streamlit', 'gradio', 'panel', 'dash',
+                'cryptography', 'pynacl', 'bcrypt', 'pyotp',
+                'boto3', 'google-cloud-storage', 'azure-storage-blob',
+                'docker', 'kubernetes', 'ansible',
+                'flower', 'flwr', 'syft', 'pysyft',
+                'onnx', 'onnxruntime', 'tensorrt',
+                'huggingface-hub', 'safetensors', 'sentencepiece',
+                'einops', 'timm', 'fairscale', 'deepspeed',
+                'gym', 'gymnasium', 'stable-baselines3',
+                'polars', 'pyarrow', 'duckdb', 'vaex',
+                'beautifulsoup4', 'scrapy', 'selenium', 'playwright',
+                'pyyaml', 'toml', 'python-dotenv', 'configparser',
+                'Pillow', 'h5py', 'zarr', 'lmdb',
+              ];
+
+              const lines = code.split('\n');
+
+              const nonInstallPatterns = [
+                /^pip\s+(list|freeze|check)\s*$/,
+                /^pip\s+show\s+\S{2,}/,
+                /^python\s+\S+\.py/,
+                /^ls(\s+-[a-zA-Z]+)?(\s+\S+)?$/,
+              ];
+
+              const pipInstallMatch = lines.find(l => {
+                const t = l.trim();
+                if (!t || t.startsWith('!') || t.startsWith('#')) return false;
+                return /^(?:pip|conda)\s+install\s+/.test(t);
+              });
+
+              const shellMatch = !pipInstallMatch && lines.find(l => {
+                const t = l.trim();
+                if (!t || t.startsWith('!') || t.startsWith('#')) return false;
+                return nonInstallPatterns.some(pat => pat.test(t));
+              });
+
+              // Non-install shell commands → just Run
+              if (shellMatch) {
+                const correctedCmd = `!${shellMatch.trim()}`;
+                return (
+                  <motion.div key="magic-hint" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="lab-magic-hint">
+                    <div className="lab-magic-hint-icon"><Zap size={14} /></div>
+                    <div className="lab-magic-hint-body">
+                      <span className="lab-magic-hint-title">Shell command detected</span>
+                      <span className="lab-magic-hint-sub">Execute <code>{correctedCmd}</code> in sandbox</span>
+                    </div>
+                    <div className="lab-magic-hint-actions">
+                      <button className="lab-magic-btn lab-magic-btn-run" onClick={() => { onExecuteCommand(correctedCmd); setCode(''); }}><Play size={10} /> Run</button>
+                    </div>
+                  </motion.div>
+                );
+              }
+
+              // pip/conda install → validate packages
+              if (pipInstallMatch) {
+                const trimmed = pipInstallMatch.trim();
+                const pkgPart = trimmed.replace(/^(?:pip|conda)\s+install\s+/, '').trim();
+                const pkgNames = pkgPart.split(/\s+/).filter(p => p && !p.startsWith('-'));
+
+                if (pkgNames.length === 0) return null;
+
+                const lastPkg = pkgNames[pkgNames.length - 1];
+                if (lastPkg.length < 2) return null;
+
+                const allValid = pkgNames.every(p =>
+                  KNOWN_PACKAGES.some(kp => kp.toLowerCase() === p.toLowerCase())
+                );
+
+                const suggestions = !allValid
+                  ? KNOWN_PACKAGES.filter(kp =>
+                      kp.toLowerCase().startsWith(lastPkg.toLowerCase()) &&
+                      kp.toLowerCase() !== lastPkg.toLowerCase()
+                    ).slice(0, 5)
+                  : [];
+
+                // All valid → show Install button
+                if (allValid) {
+                  return (
+                    <motion.div key="magic-hint" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="lab-magic-hint">
+                      <div className="lab-magic-hint-icon"><Package size={14} /></div>
+                      <div className="lab-magic-hint-body">
+                        <span className="lab-magic-hint-title">Install {pkgNames.join(', ')}</span>
+                        <span className="lab-magic-hint-sub">Package{pkgNames.length > 1 ? 's' : ''} verified — ready to install</span>
+                      </div>
+                      <div className="lab-magic-hint-actions">
+                        <button className="lab-magic-btn lab-magic-btn-run" onClick={() => { runPipInstall(pkgNames); setCode(''); }}>
+                          <Download size={10} /> Install Now
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
+                // Partial match → show clickable suggestion pills that install directly
+                if (suggestions.length > 0) {
+                  return (
+                    <motion.div key="magic-hint" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="lab-magic-hint">
+                      <div className="lab-magic-hint-icon"><Package size={14} /></div>
+                      <div className="lab-magic-hint-body">
+                        <span className="lab-magic-hint-title">Did you mean?</span>
+                        <span className="lab-magic-hint-sub lab-magic-suggestions">
+                          {suggestions.map((s, i) => (
+                            <button key={i} className="lab-magic-suggestion" onClick={() => {
+                              runPipInstall([s]);
+                              setCode('');
+                            }}>
+                              <Download size={8} /> {s}
+                            </button>
+                          ))}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
+                // Unknown package (≥3 chars) → warn but allow install attempt
+                if (lastPkg.length >= 3) {
+                  return (
+                    <motion.div key="magic-hint" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="lab-magic-hint lab-magic-hint-warn">
+                      <div className="lab-magic-hint-icon"><AlertCircle size={14} /></div>
+                      <div className="lab-magic-hint-body">
+                        <span className="lab-magic-hint-title">Unknown: {lastPkg}</span>
+                        <span className="lab-magic-hint-sub">Not in verified list — may still exist on PyPI</span>
+                      </div>
+                      <div className="lab-magic-hint-actions">
+                        <button className="lab-magic-btn lab-magic-btn-run" onClick={() => { runPipInstall(pkgNames); setCode(''); }}><Play size={10} /> Try Install</button>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
+                return null;
+              }
+
+              return null;
+            })()}
+            </AnimatePresence>
           </div>
         </div>
 
         {/* === Right Panel === */}
         <div className="lab-sidebar">
-          {/* Training Parameters */}
+          {/* ⚙️ Academic Control Console (Adaptive) */}
           <div className="lab-panel">
-            <div className="lab-panel-header">
-              <Settings size={14} />
-              <span>Training Parameters</span>
-            </div>
-            <div className="lab-panel-body">
-              <div className="lab-param-group">
-                <div className="lab-param-row">
-                  <label className="lab-param-label">Target Epochs</label>
-                  <span className="lab-param-badge">{epochs}</span>
-                </div>
-                <input 
-                  type="range" min="1" max="20" step="1" 
-                  value={epochs} onChange={(e) => setEpochs(parseInt(e.target.value))}
-                  className="lab-slider"
-                />
+            <div className="lab-panel-header flex justify-between items-center px-4 py-2 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Settings size={14} className="text-primary" />
+                <span className="type-label text-[10px]">Model_Regulation</span>
               </div>
-              <div className="lab-param-grid">
-                <div className="lab-param-group">
-                  <label className="lab-param-label">Learning Rate</label>
-                  <select 
-                    value={lr} onChange={(e) => setLr(parseFloat(e.target.value))}
-                    className="lab-select"
-                  >
-                    <option value={0.1}>0.1</option>
-                    <option value={0.01}>0.01</option>
-                    <option value={0.001}>0.001</option>
-                    <option value={0.0001}>0.0001</option>
-                  </select>
+              <div className="flex items-center gap-2">
+                <span className="text-[8px] font-bold opacity-40 uppercase tracking-tighter">Live_Sync</span>
+                <button
+                  onClick={() => setIsLiveSyncEnabled(!isLiveSyncEnabled)}
+                  className={`w-8 h-4 rounded-full relative transition-colors ${isLiveSyncEnabled ? 'bg-primary/20' : 'bg-white/5 border border-white/10'}`}
+                >
+                  <motion.div
+                    animate={{ x: isLiveSyncEnabled ? 16 : 2 }}
+                    className={`w-2.5 h-2.5 rounded-full absolute top-[3px] ${isLiveSyncEnabled ? 'bg-primary' : 'bg-gray-600'}`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-8 bg-surface overflow-y-auto max-h-[600px]">
+
+              {/* Dynamic Parameter Instruments */}
+              {neededParams.map((p, idx) => {
+                const isCore = ['epochs', 'lr', 'batch_size'].includes(p.name);
+                const isSlider = ['epochs', 'dropout', 'momentum', 'weight_decay', 'privacy_epsilon'].includes(p.name);
+
+                // Determine value and setter mapping
+                let val, setter, min = 0, max = 100, step = 1;
+                if (p.name === 'epochs') { val = epochs; setter = setEpochs; min = 1; max = 50; step = 1; }
+                else if (p.name === 'lr') { val = lr; setter = setLr; min = 0.0001; max = 1; step = 0.0001; }
+                else if (p.name === 'batch_size') { val = batchSize; setter = setBatchSize; min = 16; max = 128; step = 16; }
+                else {
+                  // Fallback for dynamic extra params
+                  val = p.value || 0;
+                  setter = (v) => syncParamToSource(p.name, v);
+                  min = 0; max = 1; step = 0.01;
+                }
+
+                return (
+                  <div key={idx} className="transition-all opacity-100 group">
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className={`link-indicator ${isLiveSyncEnabled ? 'active' : ''}`}></div>
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-text-main">
+                          {p.name?.replace('_', ' ') || 'PARAM'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {!isLiveSyncEnabled && (
+                          <button
+                            onClick={() => pushParamToSource(p.name, val)}
+                            className="px-2 py-0.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-[7px] font-bold uppercase transition-all"
+                          >
+                            Push
+                          </button>
+                        )}
+                        <span className="instrument-readout">
+                          {typeof val === 'number' ? (p.name === 'epochs' ? val.toString().padStart(2, '0') : val.toFixed(4)) : (val || '0.00')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {isSlider ? (
+                      <input
+                        type="range" min={min} max={max} step={step} value={val || 0}
+                        onChange={(e) => handleParamChange(p.name, parseFloat(e.target.value), setter)}
+                        className="instrument-slider"
+                      />
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          type={typeof val === 'number' ? "number" : "text"}
+                          step={step} value={val || ''}
+                          onChange={(e) => handleParamChange(p.name, e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value, setter)}
+                          className="w-full bg-transparent border-b border-border text-[12px] font-mono py-1 focus:border-primary outline-none transition-all"
+                        />
+                      </div>
+                    )}
+                    <div className="mt-1 text-[7px] font-mono text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      SYNCED_TO_SOURCE:LINE_{p.lineno || 'AUTO'}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {neededParams.length === 0 && (
+                <div className="py-10 text-center border border-dashed border-border rounded">
+                  <span className="text-[10px] text-text-muted italic">NO_LIVE_PARAMETERS_DETECTED</span>
                 </div>
-                <div className="lab-param-group">
-                  <label className="lab-param-label">Batch Size</label>
-                  <select 
-                    value={batchSize} onChange={(e) => setBatchSize(parseInt(e.target.value))}
-                    className="lab-select"
-                  >
-                    <option value={16}>16</option>
-                    <option value={32}>32</option>
-                    <option value={64}>64</option>
-                    <option value={128}>128</option>
-                  </select>
+              )}
+            </div>
+          </div>
+
+
+          {/* 🧪 Environment Monitor — Redesigned */}
+          <div className="lab-panel lab-env-panel">
+            <div className="lab-env-header">
+              <div className="lab-env-header-left">
+                <div className={`lab-env-status-dot ${envData ? 'lab-env-dot-ok' : 'lab-env-dot-off'}`} />
+                <span className="lab-env-header-title">Environment</span>
+              </div>
+              <div className="lab-env-header-right">
+                <span className={`lab-env-health-badge ${envData ? 'lab-env-health-ok' : 'lab-env-health-off'}`}>
+                  {envData ? 'STABLE' : 'OFFLINE'}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); fetchEnvironment(); }}
+                  className="lab-env-refresh-btn"
+                  title="Refresh"
+                >
+                  <RefreshCw size={10} className={isEnvLoading ? 'lab-spin' : ''} />
+                </button>
+              </div>
+            </div>
+
+            <div className="lab-env-body">
+              {/* Status Row */}
+              <div className="lab-env-row">
+                <div className="lab-env-metric">
+                  <span className="lab-env-metric-label">Runtime</span>
+                  <span className="lab-env-metric-value">{envData?.python || 'Python'}</span>
+                </div>
+                <div className="lab-env-metric lab-env-metric-right">
+                  <span className="lab-env-metric-label">Status</span>
+                  <span className={`lab-env-metric-value ${envData ? 'lab-env-val-ok' : ''}`}>{envData?.status || 'Awaiting'}</span>
                 </div>
               </div>
 
-              <div className="lab-env-row">
-                <div>
-                  <span className="lab-env-label">Runtime</span>
-                  <span className="lab-env-value">PyTorch 2.1</span>
+              {/* Packages Section */}
+              <div className="lab-env-section">
+                <div className="lab-env-section-header">
+                  <span className="lab-env-section-title">
+                    <Package size={10} />
+                    Packages
+                  </span>
+                  <span className="lab-env-pkg-count">{(envData?.root_packages || envData?.packages || []).length}</span>
                 </div>
-                <div>
-                  <span className="lab-env-label">Device</span>
-                  <span className="lab-env-value lab-env-device">CPU / CUDA</span>
+                <div className="lab-env-pkg-list">
+                  {(() => {
+                    const all = isDeepScan ? (envData?.all_packages || []) : (envData?.root_packages || envData?.packages || []);
+                    const sorted = [...all].sort((a, b) => {
+                      const aActive = detectedDeps.includes(a.name);
+                      const bActive = detectedDeps.includes(b.name);
+                      if (aActive && !bActive) return -1;
+                      if (!aActive && bActive) return 1;
+                      return a.name.localeCompare(b.name);
+                    });
+                    if (sorted.length === 0) {
+                      return <div className="lab-env-empty">No packages detected</div>;
+                    }
+                    return sorted.map((pkg, idx) => {
+                      const isActive = detectedDeps.includes(pkg.name);
+                      return (
+                        <div key={idx} className={`lab-env-pkg-item ${isActive ? 'lab-env-pkg-active' : ''}`}>
+                          <div className="lab-env-pkg-name">
+                            {isActive && <Activity size={8} className="lab-env-pkg-pulse" />}
+                            {pkg.name}
+                          </div>
+                          <span className="lab-env-pkg-ver">{pkg.version}</span>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
+                <button onClick={() => setIsDeepScan(!isDeepScan)} className="lab-env-deepscan-btn">
+                  {isDeepScan ? 'Show Root Only' : `Show All (${(envData?.all_packages?.length || 0)})`}
+                </button>
               </div>
+
+              {/* Dependencies Section */}
+              <div className="lab-env-section">
+                <div className="lab-env-section-header">
+                  <span className="lab-env-section-title">
+                    <Cpu size={10} />
+                    Dependencies
+                  </span>
+                </div>
+                <div className="lab-dep-badges">
+                  {detectedDeps.length > 0 ? (
+                    detectedDeps.map((dep, idx) => {
+                      const isInstalled = envData?.packages?.some(p => p.name.toLowerCase() === dep.toLowerCase());
+                      const isCurrentlyInstalling = isInstalling && installingPackages.includes(dep);
+                      return (
+                        <div
+                          key={idx}
+                          onClick={!isInstalled && !isCurrentlyInstalling ? () => runPipInstall(dep) : undefined}
+                          className={`lab-dep-badge ${isInstalled ? 'lab-dep-installed' : isCurrentlyInstalling ? 'lab-dep-installing' : 'lab-dep-missing'}`}
+                          title={isInstalled ? '✓ Installed' : isCurrentlyInstalling ? 'Installing...' : 'Click to install'}
+                        >
+                          {isCurrentlyInstalling ? (
+                            <Loader2 size={8} className="lab-spin" />
+                          ) : (
+                            <div className={`lab-dep-dot ${isInstalled ? 'lab-dep-dot-ok' : 'lab-dep-dot-missing'}`} />
+                          )}
+                          <span>{dep}</span>
+                          {!isInstalled && !isCurrentlyInstalling && <Download size={8} className="lab-dep-install-icon" />}
+                          {isInstalled && <CheckCircle2 size={8} />}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <span className="lab-dep-empty">No imports detected in source</span>
+                  )}
+                </div>
+                {(() => {
+                  const missing = detectedDeps.filter(dep => !envData?.packages?.some(p => p.name.toLowerCase() === dep.toLowerCase()));
+                  if (missing.length === 0) return null;
+                  return (
+                    <button onClick={() => runPipInstall(missing)} disabled={isInstalling} className="lab-install-all-btn">
+                      <Package size={12} />
+                      <span>Install {missing.length} Missing</span>
+                      {isInstalling && <Loader2 size={10} className="lab-spin" />}
+                    </button>
+                  );
+                })()}
+              </div>
+
+              {/* Quick Tip */}
+              <div className="lab-env-tip">
+                <Zap size={10} />
+                <span>Use <code>!pip install [pkg]</code> in the terminal to add packages.</span>
+              </div>
+
+              {/* Purge */}
+              {envData && (
+                <button onClick={handlePurgeSandbox} className="lab-env-purge-btn">Purge Sandbox</button>
+              )}
             </div>
           </div>
 
           {/* ─── Model Download Panel ─── */}
           <AnimatePresence>
             {status === 'COMPLETE' && (
-              <motion.div 
+              <motion.div
                 className="lab-panel lab-download-panel"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -364,7 +981,59 @@ export const Laboratory = ({ onAction, labState }) => {
               <span>Compiler Console</span>
               <button onClick={() => setLogs([])} className="lab-clear-btn">Clear</button>
             </div>
-            <div className="lab-console-body">
+            <div className="lab-console-body" style={{ position: 'relative' }}>
+              {/* ─── Package Installation Overlay ─── */}
+              <AnimatePresence>
+                {isInstalling && (
+                  <motion.div
+                    className="lab-install-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="lab-install-header">
+                      <div className="lab-install-header-left">
+                        <Package size={14} />
+                        <span>Package Manager</span>
+                      </div>
+                      <div className="lab-install-progress-text">{installProgress}%</div>
+                    </div>
+                    <div className="lab-install-bar-track">
+                      <motion.div
+                        className="lab-install-bar-fill"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${installProgress}%` }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                      />
+                    </div>
+                    <div className="lab-install-packages">
+                      {installingPackages.map((pkg, i) => (
+                        <div key={i} className="lab-install-pkg-row">
+                          <div className="lab-install-pkg-left">
+                            {installProgress >= ((i + 1) / installingPackages.length) * 100
+                              ? <CheckCircle2 size={10} className="lab-install-pkg-done" />
+                              : <Loader2 size={10} className="lab-spin lab-install-pkg-spin" />
+                            }
+                            <span className="lab-install-pkg-name">{pkg}</span>
+                          </div>
+                          <span className="lab-install-pkg-status">
+                            {installProgress >= ((i + 1) / installingPackages.length) * 100 ? 'installed' : 'installing...'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="lab-install-log-area">
+                      {installLogs.map((log, i) => (
+                        <div key={i} className={`lab-install-log-line ${log.type === 'cmd' ? 'lab-ilog-cmd' : log.type === 'success' ? 'lab-ilog-success' : log.type === 'error' ? 'lab-ilog-error' : ''}`}>
+                          {log.msg}
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Regular logs */}
               {logs.map((log, i) => (
                 <div key={i} className="lab-log-line">
                   <span className="lab-log-time">[{log.time}]</span>
@@ -373,9 +1042,29 @@ export const Laboratory = ({ onAction, labState }) => {
                   </span>
                 </div>
               ))}
-              {logs.length === 0 && (
+              {logs.length === 0 && !isInstalling && (
                 <div className="lab-console-empty">Awaiting researcher interaction...</div>
               )}
+              <div ref={terminalRef} />
+            </div>
+
+            {/* 🧪 Multi-line Interactive Terminal Input */}
+            <div className="lab-terminal-input-wrapper">
+              <div className="lab-terminal-prompt">
+                <ChevronRight size={14} className={isEvaluating ? 'animate-pulse text-primary' : 'text-primary'} />
+              </div>
+              <textarea
+                value={terminalInput}
+                onChange={(e) => setTerminalInput(e.target.value)}
+                onKeyDown={handleTerminalSubmit}
+                placeholder={isEvaluating ? 'Executing command...' : 'Type code or !shell command...'}
+                disabled={isEvaluating}
+                className="lab-terminal-textarea"
+                rows={terminalInput.split('\n').length || 1}
+              />
+              <div className="lab-terminal-hint">
+                {terminalInput.includes('\n') ? 'ENTER to Run | SHIFT+ENTER for New Line' : 'ENTER to Run'}
+              </div>
             </div>
           </div>
         </div>
@@ -582,6 +1271,7 @@ export const Laboratory = ({ onAction, labState }) => {
           flex: 1;
           display: flex;
           overflow: hidden;
+          position: relative;
         }
         .lab-gutter {
           width: 52px;
@@ -606,6 +1296,17 @@ export const Laboratory = ({ onAction, labState }) => {
           font-weight: 700;
           background: rgba(239, 68, 68, 0.06);
         }
+        .lab-gutter-syncing {
+          background: color-mix(in srgb, var(--primary) 10%, transparent);
+          color: var(--primary);
+        }
+        .lab-sync-indicator {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: var(--primary);
+        }
         .lab-textarea {
           flex: 1;
           border: none;
@@ -625,6 +1326,138 @@ export const Laboratory = ({ onAction, labState }) => {
           background: color-mix(in srgb, var(--primary) 12%, transparent);
         }
 
+        /* ═══ MAGIC COMMAND HINT ═══ */
+        .lab-magic-hint {
+          position: absolute;
+          bottom: 16px;
+          left: 64px;
+          right: 16px;
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 16px;
+          background: linear-gradient(135deg, #1e1b4b, #312e81);
+          border: 1px solid rgba(129,140,248,0.35);
+          border-radius: 8px;
+          box-shadow: 0 8px 32px rgba(99,102,241,0.25), 0 0 0 1px rgba(99,102,241,0.1);
+          backdrop-filter: blur(12px);
+        }
+        .lab-magic-hint-icon {
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(99,102,241,0.2);
+          border-radius: 6px;
+          color: #a5b4fc;
+          flex-shrink: 0;
+          animation: lab-magic-pulse 2s ease-in-out infinite;
+        }
+        @keyframes lab-magic-pulse {
+          0%, 100% { box-shadow: 0 0 8px rgba(99,102,241,0.3); }
+          50% { box-shadow: 0 0 16px rgba(99,102,241,0.6); }
+        }
+        .lab-magic-hint-body {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+        }
+        .lab-magic-hint-title {
+          font-size: 11px;
+          font-weight: 700;
+          color: #e0e7ff;
+          letter-spacing: 0.02em;
+        }
+        .lab-magic-hint-sub {
+          font-size: 10px;
+          color: rgba(165,180,252,0.7);
+        }
+        .lab-magic-hint-sub code {
+          color: #a5b4fc;
+          font-weight: 700;
+          font-family: var(--font-mono);
+          background: rgba(99,102,241,0.15);
+          padding: 1px 6px;
+          border-radius: 3px;
+          font-size: 11px;
+        }
+        .lab-magic-hint-actions {
+          display: flex;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+        .lab-magic-btn {
+          padding: 6px 14px;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: all 0.15s;
+          font-family: var(--font-sans);
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .lab-magic-btn-run {
+          background: #6366f1;
+          color: #fff;
+        }
+        .lab-magic-btn-run:hover {
+          background: #7c3aed;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+        .lab-magic-hint-warn {
+          background: linear-gradient(135deg, #7c2d12, #9a3412);
+          border-color: rgba(251,191,36,0.4);
+          box-shadow: 0 8px 32px rgba(245,158,11,0.2);
+        }
+        .lab-magic-hint-warn .lab-magic-hint-icon {
+          background: rgba(251,191,36,0.25);
+          color: #fcd34d;
+          animation: none;
+        }
+        .lab-magic-hint-warn .lab-magic-hint-title {
+          color: #fef3c7;
+        }
+        .lab-magic-hint-warn .lab-magic-hint-sub {
+          color: rgba(254,243,199,0.7);
+        }
+        .lab-magic-suggestions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+        }
+        .lab-magic-suggestion {
+          padding: 4px 12px;
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.2);
+          border-radius: 4px;
+          color: #e0e7ff;
+          font-family: var(--font-mono);
+          font-size: 10px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .lab-magic-suggestion:hover {
+          background: rgba(255,255,255,0.2);
+          border-color: rgba(255,255,255,0.35);
+          color: #fff;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+
         /* ─── Side Panel ─── */
         .lab-sidebar {
           width: 340px;
@@ -637,6 +1470,278 @@ export const Laboratory = ({ onAction, labState }) => {
         .lab-sidebar::-webkit-scrollbar { width: 4px; }
         .lab-sidebar::-webkit-scrollbar-track { background: transparent; }
         .lab-sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+        /* ═══ Environment Panel ═══ */
+        .lab-env-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          background: var(--bg-surface);
+          border-bottom: 1px solid var(--border);
+        }
+        .lab-env-header-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .lab-env-status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .lab-env-dot-ok {
+          background: var(--success);
+          box-shadow: 0 0 8px rgba(16,185,129,0.4);
+          animation: lab-env-glow 2s ease-in-out infinite;
+        }
+        .lab-env-dot-off {
+          background: var(--border);
+        }
+        @keyframes lab-env-glow {
+          0%, 100% { box-shadow: 0 0 6px rgba(16,185,129,0.3); }
+          50% { box-shadow: 0 0 14px rgba(16,185,129,0.6); }
+        }
+        .lab-env-header-title {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: var(--text-main);
+        }
+        .lab-env-header-right {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .lab-env-health-badge {
+          font-size: 8px;
+          font-weight: 800;
+          letter-spacing: 0.12em;
+          padding: 2px 8px;
+          border-radius: 3px;
+          text-transform: uppercase;
+        }
+        .lab-env-health-ok {
+          color: var(--success);
+          background: rgba(16,185,129,0.08);
+          border: 1px solid rgba(16,185,129,0.2);
+        }
+        .lab-env-health-off {
+          color: var(--text-muted);
+          background: rgba(100,116,139,0.06);
+          border: 1px solid var(--border);
+        }
+        .lab-env-refresh-btn {
+          width: 26px;
+          height: 26px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 4px;
+          border: 1px solid var(--border);
+          background: var(--bg-main);
+          color: var(--text-muted);
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .lab-env-refresh-btn:hover {
+          background: var(--primary);
+          color: white;
+          border-color: var(--primary);
+        }
+        .lab-env-body {
+          padding: 14px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          background: var(--bg-main);
+        }
+        .lab-env-row {
+          display: flex;
+          gap: 10px;
+        }
+        .lab-env-metric {
+          flex: 1;
+          padding: 10px 12px;
+          background: var(--bg-surface);
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .lab-env-metric-right {
+          text-align: right;
+          align-items: flex-end;
+        }
+        .lab-env-metric-label {
+          font-size: 8px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: var(--text-muted);
+        }
+        .lab-env-metric-value {
+          font-size: 12px;
+          font-weight: 600;
+          font-family: var(--font-mono);
+          color: var(--text-main);
+        }
+        .lab-env-val-ok { color: var(--success); }
+        .lab-env-section {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .lab-env-section-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .lab-env-section-title {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 9px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: var(--text-muted);
+        }
+        .lab-env-pkg-count {
+          font-size: 9px;
+          font-weight: 700;
+          font-family: var(--font-mono);
+          color: var(--primary);
+          background: rgba(54,78,104,0.06);
+          padding: 2px 8px;
+          border-radius: 10px;
+        }
+        .lab-env-pkg-list {
+          max-height: 180px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+          border-radius: 6px;
+          border: 1px solid var(--border);
+          background: var(--bg-surface);
+        }
+        .lab-env-pkg-list::-webkit-scrollbar { width: 3px; }
+        .lab-env-pkg-list::-webkit-scrollbar-track { background: transparent; }
+        .lab-env-pkg-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .lab-env-pkg-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 6px 10px;
+          transition: background 0.15s;
+          border-bottom: 1px solid rgba(226,230,236,0.5);
+        }
+        .lab-env-pkg-item:last-child { border-bottom: none; }
+        .lab-env-pkg-item:hover {
+          background: rgba(54,78,104,0.03);
+        }
+        .lab-env-pkg-active {
+          background: rgba(16,185,129,0.04);
+          border-left: 2px solid var(--success);
+        }
+        .lab-env-pkg-name {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 10px;
+          font-family: var(--font-mono);
+          font-weight: 500;
+          color: var(--text-main);
+        }
+        .lab-env-pkg-active .lab-env-pkg-name {
+          color: var(--success);
+          font-weight: 700;
+        }
+        .lab-env-pkg-pulse {
+          color: var(--success);
+        }
+        .lab-env-pkg-ver {
+          font-size: 9px;
+          font-family: var(--font-mono);
+          color: var(--text-muted);
+          opacity: 0.6;
+        }
+        .lab-env-empty {
+          padding: 24px;
+          text-align: center;
+          font-size: 10px;
+          color: var(--text-muted);
+          font-style: italic;
+        }
+        .lab-env-deepscan-btn {
+          width: 100%;
+          padding: 6px;
+          background: transparent;
+          border: 1px dashed var(--border);
+          border-radius: 4px;
+          color: var(--text-muted);
+          font-size: 9px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+        .lab-env-deepscan-btn:hover {
+          border-color: var(--primary);
+          color: var(--primary);
+          background: rgba(54,78,104,0.03);
+        }
+        .lab-env-tip {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          padding: 10px 12px;
+          background: rgba(54,78,104,0.04);
+          border: 1px solid rgba(54,78,104,0.1);
+          border-radius: 6px;
+          color: var(--text-muted);
+          font-size: 9px;
+          line-height: 1.5;
+        }
+        .lab-env-tip svg {
+          color: var(--primary);
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+        .lab-env-tip code {
+          font-family: var(--font-mono);
+          color: var(--primary);
+          font-weight: 700;
+          background: rgba(54,78,104,0.08);
+          padding: 1px 5px;
+          border-radius: 3px;
+          font-size: 9px;
+        }
+        .lab-env-purge-btn {
+          width: 100%;
+          padding: 7px;
+          background: rgba(239,68,68,0.04);
+          border: 1px solid rgba(239,68,68,0.15);
+          border-radius: 4px;
+          color: var(--error);
+          font-size: 9px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          transition: all 0.2s;
+          opacity: 0.6;
+        }
+        .lab-env-purge-btn:hover {
+          background: rgba(239,68,68,0.08);
+          border-color: rgba(239,68,68,0.3);
+          opacity: 1;
+        }
 
         .lab-panel {
           border-bottom: 1px solid var(--border);
@@ -686,6 +1791,16 @@ export const Laboratory = ({ onAction, labState }) => {
           color: var(--primary);
           background: color-mix(in srgb, var(--primary) 8%, transparent);
           padding: 2px 10px;
+        }
+        .link-indicator {
+          width: 4px; height: 4px;
+          border-radius: 50%;
+          background: var(--border);
+          transition: all 0.2s;
+        }
+        .link-indicator.active {
+          background: var(--primary);
+          box-shadow: 0 0 5px var(--primary);
         }
         .lab-slider {
           width: 100%;
@@ -853,7 +1968,15 @@ export const Laboratory = ({ onAction, labState }) => {
           color: var(--warning);
           opacity: 1;
         }
-        .lab-console-empty {
+        .lab-log-user {
+          color: var(--primary);
+          opacity: 1;
+          background: rgba(0, 255, 65, 0.05);
+          padding: 0 4px;
+          border-radius: 2px;
+          font-weight: 700;
+        }
+         .lab-console-empty {
           color: #c4c8cc;
           font-style: italic;
           text-align: center;
@@ -862,7 +1985,284 @@ export const Laboratory = ({ onAction, labState }) => {
           text-transform: uppercase;
           letter-spacing: 0.12em;
         }
+
+        /* ═══ PACKAGE INSTALLATION OVERLAY ═══ */
+        .lab-install-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 20;
+          background: #0c0f18;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .lab-install-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          background: linear-gradient(135deg, rgba(79,70,229,0.12), rgba(16,185,129,0.08));
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+          flex-shrink: 0;
+        }
+        .lab-install-header-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #a78bfa;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+        }
+        .lab-install-progress-text {
+          font-family: var(--font-mono);
+          font-size: 13px;
+          font-weight: 800;
+          color: #10b981;
+          letter-spacing: 0.05em;
+        }
+        .lab-install-bar-track {
+          height: 3px;
+          background: rgba(255,255,255,0.06);
+          flex-shrink: 0;
+        }
+        .lab-install-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #6366f1, #10b981);
+          border-radius: 0 2px 2px 0;
+        }
+        .lab-install-packages {
+          padding: 12px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex-shrink: 0;
+          border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .lab-install-pkg-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 6px 10px;
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.04);
+        }
+        .lab-install-pkg-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .lab-install-pkg-done { color: #10b981; }
+        .lab-install-pkg-spin { color: #a78bfa; }
+        .lab-install-pkg-name {
+          font-family: var(--font-mono);
+          font-size: 11px;
+          font-weight: 600;
+          color: rgba(255,255,255,0.85);
+        }
+        .lab-install-pkg-status {
+          font-size: 9px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: rgba(255,255,255,0.3);
+        }
+        .lab-install-log-area {
+          flex: 1;
+          overflow-y: auto;
+          padding: 10px 16px;
+          font-family: var(--font-mono);
+          font-size: 10px;
+          line-height: 20px;
+        }
+        .lab-install-log-area::-webkit-scrollbar { width: 3px; }
+        .lab-install-log-area::-webkit-scrollbar-track { background: transparent; }
+        .lab-install-log-area::-webkit-scrollbar-thumb { background: #1e293b; }
+        .lab-install-log-line {
+          color: rgba(255,255,255,0.35);
+          white-space: pre-wrap;
+        }
+        .lab-ilog-cmd {
+          color: #a78bfa;
+          font-weight: 700;
+          padding: 4px 0;
+        }
+        .lab-ilog-success {
+          color: #10b981;
+          font-weight: 600;
+        }
+        .lab-ilog-error {
+          color: #ef4444;
+          font-weight: 600;
+        }
+
+        /* ═══ DEPENDENCY BADGES ═══ */
+        .lab-dep-section-title {
+          font-size: 8px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          color: rgba(255,255,255,0.25);
+          margin-bottom: 4px;
+        }
+        .lab-dep-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 8px;
+        }
+        .lab-dep-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 10px;
+          font-size: 10px;
+          font-family: var(--font-mono);
+          font-weight: 600;
+          border: 1px solid;
+          cursor: pointer;
+          transition: all 0.2s;
+          user-select: none;
+        }
+        .lab-dep-installed {
+          color: var(--primary);
+          border-color: rgba(0,255,65,0.15);
+          background: rgba(0,255,65,0.05);
+          cursor: default;
+        }
+        .lab-dep-missing {
+          color: #f87171;
+          border-color: rgba(248,113,113,0.25);
+          background: rgba(248,113,113,0.06);
+        }
+        .lab-dep-missing:hover {
+          background: rgba(248,113,113,0.12);
+          border-color: rgba(248,113,113,0.4);
+          transform: translateY(-1px);
+        }
+        .lab-dep-installing {
+          color: #a78bfa;
+          border-color: rgba(167,139,250,0.25);
+          background: rgba(167,139,250,0.06);
+          cursor: wait;
+        }
+        .lab-dep-dot {
+          width: 5px; height: 5px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .lab-dep-dot-ok { background: var(--primary); }
+        .lab-dep-dot-missing {
+          background: #f87171;
+          animation: lab-dep-pulse 1.5s infinite;
+        }
+        @keyframes lab-dep-pulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(248,113,113,0.4); }
+          50% { opacity: 0.4; box-shadow: none; }
+        }
+        .lab-dep-install-icon {
+          opacity: 0.4;
+          transition: opacity 0.2s;
+        }
+        .lab-dep-missing:hover .lab-dep-install-icon {
+          opacity: 1;
+        }
+        .lab-dep-empty {
+          font-size: 9px;
+          color: var(--text-muted);
+          font-style: italic;
+        }
+        .lab-install-all-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          padding: 10px 16px;
+          background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(236,72,153,0.08));
+          border: 1px solid rgba(99,102,241,0.25);
+          color: #a78bfa;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: var(--font-sans);
+        }
+        .lab-install-all-btn:hover:not(:disabled) {
+          background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(236,72,153,0.15));
+          border-color: rgba(99,102,241,0.4);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+        }
+        .lab-install-all-btn:disabled {
+          opacity: 0.4;
+          cursor: wait;
+        }
+
+        /* 🧪 Research Shell Terminal UI Styling */
+        .lab-terminal-input-wrapper {
+          padding: 12px 20px;
+          background: rgba(0,0,0,0.4);
+          border-top: 1px solid rgba(255,255,255,0.03);
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .lab-terminal-prompt {
+          display: flex;
+          align-items: center;
+          color: var(--primary);
+        }
+        .lab-terminal-textarea {
+          width: 100%;
+          background: transparent;
+          border: none;
+          outline: none;
+          color: white;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          line-height: 1.5;
+          resize: none;
+          padding: 4px 0;
+        }
+        .lab-terminal-textarea::placeholder {
+          color: #444;
+          font-style: italic;
+        }
+        .lab-terminal-hint {
+          font-size: 8px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #333;
+          text-align: right;
+          font-weight: 700;
+        }
+
+        /* 📱 Market-Ready Responsiveness */
+        @media (max-width: 1024px) {
+          .lab-workspace {
+            flex-direction: column;
+            overflow-y: auto;
+          }
+          .lab-sidebar {
+            width: 100%;
+            border-left: none;
+            border-top: 1px solid var(--border);
+            height: auto;
+            flex-shrink: 0;
+          }
+          .lab-editor-panel {
+            min-height: 500px;
+            flex: none;
+          }
+          .lab-console-panel {
+            min-height: 300px;
+          }
+        }
       `}</style>
     </div>
   );
-};
+}

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, ShieldCheck, Cpu, Key, ChevronRight, Activity, Terminal, Mail, UserPlus, LogIn } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Login = ({ onLogin }) => {
+  const { login, register, loginWithGoogle, authError } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -11,27 +13,11 @@ export const Login = ({ onLogin }) => {
   const [authStep, setAuthStep] = useState(0); // 0: Idle, 1: Connecting, 2: Validating
   const [error, setError] = useState('');
 
-  const getApiUrl = () => {
-    let url = '';
-    // In production (Vercel frontend + HuggingFace backend split-arch):
-    //   VITE_BACKEND_URL must be set to the HuggingFace Space URL, e.g.:
-    //   https://your-username-cybronites-fl.hf.space
-    // In development, proxy via Vite to localhost backend.
-    if (import.meta.env.PROD) {
-      // Forcefully hardcode to correct Hugging Face embedded domain to avoid Env Var typos
-      url = 'https://rishuuuuuu-cybronites-secure-fl.hf.space';
-    } else {
-      const port = import.meta.env.VITE_BACKEND_PORT || '7880';
-      url = `http://localhost:${port}`;
-    }
-    return url.replace(/\/+$/, '');
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
-    if (!username || !password || (isSignUp && !email)) {
+    if (!email || !password || (isSignUp && !username)) {
       setError('Please fill in all mandatory fields.');
       return;
     }
@@ -40,53 +26,33 @@ export const Login = ({ onLogin }) => {
     setAuthStep(1);
 
     try {
-      const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login';
-      const body = isSignUp 
-        ? { username, email, password } 
-        : { identity: username, password };
-
-      const response = await fetch(`${getApiUrl()}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      // Guard: parse JSON safely — an empty/HTML body causes "Unexpected end of JSON input"
-      let data = {};
-      const contentType = response.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        if (!response.ok) {
-          throw new Error(`Backend returned non-JSON response (${response.status}). Is the backend online?\n${text.slice(0, 120)}`);
-        }
-      }
-
-      if (!response.ok) {
-        const errMsg = typeof data.detail === 'string' 
-          ? data.detail 
-          : (data.detail?.[0]?.msg || JSON.stringify(data.detail) || 'Authentication failed');
-        throw new Error(errMsg);
-      }
-
-      setAuthStep(2);
-
-      // Simulation delay for aesthetic
-      setTimeout(() => {
-        if (isSignUp) {
-          // If signup success, switch to login or auto-login
+      if (isSignUp) {
+        await register(email, password, { username });
+        setAuthStep(2);
+        setTimeout(() => {
           setIsSignUp(false);
           setIsAuthenticating(false);
-          // Show success state briefly
-          setError('Account created. Please sign in.');
-        } else {
-          onLogin(data); // data contains { access_token, user }
-        }
-      }, 800);
-
+          setError('Verification link sent. Please check your email.');
+        }, 1200);
+      } else {
+        await login(email, password);
+        setAuthStep(2);
+        // App.jsx session listener will handle state change
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Authentication failed');
+      setIsAuthenticating(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setError('');
+      setIsAuthenticating(true);
+      setAuthStep(1);
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err.message || 'Google login failed');
       setIsAuthenticating(false);
     }
   };
@@ -97,9 +63,9 @@ export const Login = ({ onLogin }) => {
       <div className="login-grid" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="login-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="login-container glass-panel card-shadow-premium"
       >
         {/* Header Block */}
         <header className="login-header">
@@ -122,38 +88,28 @@ export const Login = ({ onLogin }) => {
         <div className="login-body">
           <AnimatePresence mode="wait">
             {!isAuthenticating ? (
-              <motion.form 
+              <motion.div 
                 key="form"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                onSubmit={handleSubmit}
-                className="login-form"
+                className="login-form-container"
               >
-                {error && (
-                  <div className="login-error-banner">
-                    <Activity size={12} />
-                    <span>{error}</span>
-                  </div>
-                )}
+                <form onSubmit={handleSubmit} className="login-form">
+                  {(error || authError) ? (
+                    <div className="login-error-banner bg-red-50 border-red-100 text-red-600">
+                      <Activity size={12} />
+                      <span>{error || authError}</span>
+                    </div>
+                  ) : (
+                    <div className="login-error-banner bg-emerald-50/50 border-emerald-200/30 text-emerald-700 font-bold">
+                       <ShieldCheck size={12} />
+                       <span>SECURE ACCESS READY</span>
+                    </div>
+                  )}
 
-                <div className="login-field-group">
-                  <label className="login-label">Institutional Identity</label>
-                  <div className="login-input-wrap">
-                    <Cpu size={14} className="login-input-icon" />
-                    <input 
-                      type="text" 
-                      placeholder={isSignUp ? "Choose a username" : "Username or Email"}
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="login-input"
-                    />
-                  </div>
-                </div>
-
-                {isSignUp && (
                   <div className="login-field-group">
-                    <label className="login-label">Email Address</label>
+                    <label className="login-label">Institutional Email</label>
                     <div className="login-input-wrap">
                       <Mail size={14} className="login-input-icon" />
                       <input 
@@ -162,49 +118,85 @@ export const Login = ({ onLogin }) => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="login-input"
+                        required
                       />
                     </div>
                   </div>
-                )}
 
-                <div className="login-field-group">
-                  <label className="login-label">Access Key</label>
-                  <div className="login-input-wrap">
-                    <Key size={14} className="login-input-icon" />
-                    <input 
-                      type="password" 
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="login-input"
-                    />
+                  {isSignUp && (
+                    <div className="login-field-group">
+                      <label className="login-label">Researcher Identity</label>
+                      <div className="login-input-wrap">
+                        <Cpu size={14} className="login-input-icon" />
+                        <input 
+                          type="text" 
+                          placeholder="Choose a username"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          className="login-input"
+                          required={isSignUp}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="login-field-group">
+                    <label className="login-label">Access Key</label>
+                    <div className="login-input-wrap">
+                      <Key size={14} className="login-input-icon" />
+                      <input 
+                        type="password" 
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="login-input"
+                        required
+                      />
+                    </div>
                   </div>
+
+                  <div className="login-actions">
+                    <button type="submit" className="login-submit-btn">
+                      <span>{isSignUp ? 'Register' : 'Sign In'}</span>
+                      <ChevronRight size={14} />
+                      <div className="login-btn-glimmer" />
+                    </button>
+                  </div>
+                </form>
+
+                <div className="login-divider">
+                  <div className="login-divider-line" />
+                  <span className="login-divider-text">OR CONTINUE WITH</span>
+                  <div className="login-divider-line" />
                 </div>
 
-                <div className="login-actions">
-                  <button type="submit" className="login-submit-btn">
-                    <span>{isSignUp ? 'Register' : 'Sign In'}</span>
-                    <ChevronRight size={14} />
-                    <div className="login-btn-glimmer" />
-                  </button>
-
+                <div className="login-social-actions">
                   <button 
                     type="button" 
-                    className="login-toggle-btn"
-                    onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
+                    className="login-google-btn"
+                    onClick={handleGoogleLogin}
                   >
-                    {isSignUp ? (
-                      <span className="flex items-center gap-2">
-                        <LogIn size={12} /> Already have an account? Sign In
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        <UserPlus size={12} /> New Researcher? Create Account
-                      </span>
-                    )}
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" className="login-soc-icon" />
+                    <span>Google Cloud Identity</span>
                   </button>
                 </div>
-              </motion.form>
+
+                <button 
+                  type="button" 
+                  className="login-toggle-btn"
+                  onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
+                >
+                  {isSignUp ? (
+                    <span className="flex items-center gap-2">
+                      <LogIn size={12} /> Already have an account? Sign In
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <UserPlus size={12} /> New Researcher? Create Account
+                    </span>
+                  )}
+                </button>
+              </motion.div>
             ) : (
               <motion.div 
                 key="auth"
@@ -240,11 +232,11 @@ export const Login = ({ onLogin }) => {
         <footer className="login-footer">
           <div className="login-footer-item">
             <Activity size={10} />
-            <span>SESSION: DB_CONNECTED</span>
+            <span>SESSION: SUPABASE_CONNECTED</span>
           </div>
           <div className="login-footer-item">
             <Lock size={10} />
-            <span>SQLITE_V3_SECURE</span>
+            <span>AUTH_RLS_SECURE</span>
           </div>
         </footer>
       </motion.div>
@@ -358,7 +350,63 @@ export const Login = ({ onLogin }) => {
         .login-input:focus { outline: none; }
         .login-input::placeholder { color: var(--text-muted); opacity: 0.3; }
 
-        .login-actions { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
+        .login-actions { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+
+        .login-divider {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin: 32px 0;
+        }
+
+        .login-divider-line {
+          flex: 1;
+          height: 1px;
+          background: var(--border);
+          opacity: 0.5;
+        }
+
+        .login-divider-text {
+          font-size: 8px;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.15em;
+          white-space: nowrap;
+        }
+
+        .login-social-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 24px;
+        }
+
+        .login-google-btn {
+          height: 48px;
+          background: #fff;
+          border: 1px solid var(--border);
+          color: var(--text-main);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .login-google-btn:hover {
+          background: #fdfdfd;
+          border-color: var(--primary);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .login-soc-icon {
+          width: 18px;
+          height: 18px;
+        }
 
         .login-submit-btn {
           height: 48px;
@@ -391,6 +439,7 @@ export const Login = ({ onLogin }) => {
           opacity: 0.6;
           transition: all 0.2s;
           display: flex;
+          width: 100%;
           justify-content: center;
         }
         .login-toggle-btn:hover { opacity: 1; color: var(--primary); }

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+./venv/bin/python run_client.py --server https://rishuuuuuu-cybronites-secure-fl.hf.space --name "Dost-Ka-Laptop"
 Cybronites — Distributed Learning Client
 
 Run this on ANY device to participate in federated training.

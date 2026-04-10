@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line
 } from 'recharts';
 import { Activity, TrendingDown, TrendingUp } from 'lucide-react';
 
 export const MetricsChart = ({ data = [], lossData = [] }) => {
+  const containerRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // Wait for container to have positive dimensions before rendering chart
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const check = () => {
+      const { width, height } = el.getBoundingClientRect();
+      if (width > 10 && height > 10) setIsReady(true);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   // Map raw floats to charted objects.
   const chartData = data.length > 0 
     ? data.map((val, index) => ({
@@ -39,7 +55,8 @@ export const MetricsChart = ({ data = [], lossData = [] }) => {
         </div>
       </div>
 
-      <div className="h-[240px] w-full min-h-[240px] relative overflow-hidden" style={{ minWidth: 0 }}>
+      <div ref={containerRef} className="h-[240px] w-full min-h-[240px] relative overflow-hidden" style={{ minWidth: 0 }}>
+        {isReady && (
         <ResponsiveContainer width="99%" height="100%" debounce={50}>
           <AreaChart
             data={chartData}
@@ -120,6 +137,7 @@ export const MetricsChart = ({ data = [], lossData = [] }) => {
             />
           </AreaChart>
         </ResponsiveContainer>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-8 mt-10">

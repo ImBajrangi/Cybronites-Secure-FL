@@ -10,12 +10,14 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0 }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filterType, setFilterType] = React.useState('All');
   
-  const fragments = shards.slice(0, clientsActive);
-  const types = ['All', ...new Set(fragments.map(f => f.type))];
+  const fragments = shards.slice(0, clientsActive).filter(f => f && typeof f === 'object');
+  const types = ['All', ...new Set(fragments.map(f => f.type || 'Unknown'))];
 
   const filteredFragments = fragments.filter(frag => {
-    const matchesSearch = frag.org.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         frag.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const org = (frag.org || '').toLowerCase();
+    const id = (frag.id || '').toLowerCase();
+    const matchesSearch = org.includes(searchQuery.toLowerCase()) || 
+                         id.includes(searchQuery.toLowerCase());
     const matchesFilter = filterType === 'All' || frag.type === filterType;
     return matchesSearch && matchesFilter;
   });
@@ -92,8 +94,8 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0 }) => {
               className="ds-card group"
             >
               <div className="ds-card-header">
-                <div className="ds-card-tag">FRAG-{frag.id}</div>
-                <h3 className="ds-card-org">{frag.org}</h3>
+                <div className="ds-card-tag">FRAG-{frag.id || 'UNKNOWN'}</div>
+                <h3 className="ds-card-org">{frag.org || 'Unnamed Shard'}</h3>
                 <div className="ds-card-icon-wrap">
                   <FileText size={16} />
                 </div>
@@ -103,12 +105,12 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0 }) => {
                 <div className="ds-metric-group">
                   <div className="ds-metric-header">
                     <span className="ds-metric-label">Shard Density</span>
-                    <span className="ds-metric-value">{frag.density}%</span>
+                    <span className="ds-metric-value">{frag.density || 0}%</span>
                   </div>
                   <div className="ds-progress-track">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: `${frag.density}%` }}
+                      animate={{ width: `${frag.density || 0}%` }}
                       className="ds-progress-fill"
                     />
                   </div>
@@ -122,13 +124,13 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0 }) => {
                   <div className="ds-stat-divider" />
                   <div className="ds-stat">
                     <span className="ds-stat-label">Protocol</span>
-                    <span className="ds-stat-value">{frag.type}</span>
+                    <span className="ds-stat-value">{frag.type || 'Unknown'}</span>
                   </div>
                 </div>
               </div>
               
               <div className="ds-card-footer">
-                <span className="ds-footer-date">{frag.date}</span>
+                <span className="ds-footer-date">{frag.date || '—'}</span>
                 <button className="ds-footer-btn">
                   <span>METADATA</span>
                   <Download size={10} />

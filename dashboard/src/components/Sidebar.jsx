@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   LayoutDashboard, Database, ShieldCheck, Terminal, Activity, Layers,
-  History, Workflow, Cpu, BookOpen, PieChart, Server, ChevronRight, LogOut
+  History, Workflow, Cpu, BookOpen, PieChart, Server, ChevronRight, LogOut, User
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const MetricItem = ({ label, value, icon: Icon, color }) => (
   <div className="sb-metric-item group">
@@ -18,6 +19,9 @@ const MetricItem = ({ label, value, icon: Icon, color }) => (
 );
 
 export const Sidebar = ({ currentView, setView, clients = [], nodeRegistry = {}, rejectedCount = 0, blockchain = [], width, onResize, onLogout }) => {
+  const { user, displayName, profile } = useAuth();
+  const userEmail = user?.email || 'guest@node.local';
+  const userInitials = displayName?.slice(0, 2)?.toUpperCase() || 'RN';
   const activeCount = clients.filter(c => c.status === 'ACTIVE' || c.status === 'BUSY').length;
   const nodeCount = Object.keys(nodeRegistry).length || clients.length || 0;
 
@@ -94,13 +98,17 @@ export const Sidebar = ({ currentView, setView, clients = [], nodeRegistry = {},
       <footer className="sb-footer">
         <div className="sb-footer-inner">
           <div className="sb-user-avatar">
-            <Server size={14} />
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2 }} />
+            ) : (
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.05em' }}>{userInitials}</span>
+            )}
           </div>
           <div className="sb-user-info">
-            <span className="sb-user-name">Research Node</span>
+            <span className="sb-user-name" title={userEmail}>{displayName}</span>
             <div className="sb-user-status">
               <div className="sb-status-dot" />
-              <span>Operational</span>
+              <span>{user?.guest ? 'Guest Mode' : 'Authenticated'}</span>
             </div>
           </div>
           <button className="sb-logout-btn" onClick={onLogout} title="Terminate Session">

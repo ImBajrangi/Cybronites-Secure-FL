@@ -7,15 +7,18 @@ import { Terminal } from './components/Terminal';
 import { BlockchainRibbon } from './components/BlockchainExplorer';
 import { TrainingWorkspace } from './components/TrainingWorkspace';
 import { DatasetExplorer } from './components/DatasetExplorer';
-import { Laboratory } from './components/Laboratory';
+import Laboratory from './components/Laboratory';
 import { PrivacyVault } from './components/PrivacyVault';
 import { Dashboard } from './components/Dashboard';
 import { Login } from './components/Login';
 import { useSecureFederated } from './hooks/useSecureFederated';
+import { useAuth } from './context/AuthContext';
+import { logActivity, createTrainingSession, updateTrainingSession, logExperimentRound } from './lib/supabaseDB';
 import { Play, RotateCcw, ShieldCheck, Info, X, Zap, Activity, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
+  const { user, logout, loading, activeSessionId, setActiveSessionId } = useAuth();
   const {
     round,
     isActive,
@@ -39,21 +42,27 @@ function App() {
     shards,
     clientsActive,
     labState,
-    distributedStatus,
-    startDistributed,
-    stopDistributed,
-    refreshDistributedStatus,
-    API_BASE_URL,
+    executeDashboardCommand,
+    evalLaboratoryCode,
   } = useSecureFederated();
 
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('federated_token') !== null;
+  const [currentView, setCurrentView] = useState(() => {
+    try {
+      const saved = localStorage.getItem('federated_view');
+      return saved || 'dashboard';
+    } catch {
+      return 'dashboard';
+    }
   });
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('federated_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+
+  // Log view changes to Supabase
+  const handleViewChange = useCallback((view) => {
+    setCurrentView(view);
+    if (user && !user.guest) {
+      logActivity(user.id, 'VIEW_CHANGE', { view });
+    }
+  }, [user]);
+
   const [toasts, setToasts] = useState([]);
   const [sidebarWidth, setSidebarWidth] = useState(280);
   const [footerHeight, setFooterHeight] = useState(280);
@@ -104,32 +113,6 @@ function App() {
   }, []);
 
 
-  // Session Recovery
-  useEffect(() => {
-    const recoverSession = async () => {
-      const token = localStorage.getItem('federated_token');
-      if (!token) return;
-
-      try {
-        let baseUrl = import.meta.env.PROD 
-          ? 'https://rishuuuuuu-cybronites-secure-fl.hf.space'
-          : `http://localhost:${import.meta.env.VITE_BACKEND_PORT || '7880'}`;
-        baseUrl = baseUrl.replace(/\/+$/, '');
-        const response = await fetch(`${baseUrl}/api/auth/me?token=${token}`);
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          handleLogout();
-        }
-      } catch (err) {
-        console.error("Session recovery failed:", err);
-      }
-    };
-    recoverSession();
-  }, []);
-
   const addToast = (msg, type = 'success') => {
     const id = Math.random().toString(36).substr(2, 9);
     setToasts(prev => [...prev, { id, msg, type }]);
@@ -145,33 +128,77 @@ function App() {
     }
 
     addToast(status === 'IDLE' ? 'Initiating Federated Session...' : 'Session already in progress.', 'info');
-    // In our new architecture, run_backend.py starts the rounds. 
-    // The button acts as a "Synchonize/Monitor" state.
+    
+    // Create a training session in Supabase
+    if (user && !user.guest) {
+      try {
+        const session = await createTrainingSession(user.id, hyperparams);
+        if (session) setActiveSessionId(session.id);
+        logActivity(user.id, 'START_TRAINING', { sessionId: session?.id });
+      } catch (err) {
+        console.warn('DB session creation failed (non-critical):', err.message);
+      }
+    }
+    
     await runRound();
   };
 
-  const handleLogin = (data) => {
-    const { access_token, user: userData } = data;
-    setIsAuthenticated(true);
-    setUser(userData);
-    localStorage.setItem('federated_token', access_token);
-    localStorage.setItem('federated_user', JSON.stringify(userData));
-    addToast(`Access Granted: Welcome ${userData.username || userData.id}`, 'success');
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    localStorage.removeItem('federated_token');
-    localStorage.removeItem('federated_user');
+  const handleLogout = async () => {
+    if (user && !user.guest) {
+      logActivity(user.id, 'LOGOUT');
+    }
+    await logout();
     addToast('Session Terminated.', 'info');
   };
+
+  // Track training completion — log experiment round data to Supabase
+  useEffect(() => {
+    if (!user || user.guest || !activeSessionId) return;
+    if (status === 'FINISHED' && accuracyHistory.length > 0) {
+      const latestAcc = accuracyHistory[accuracyHistory.length - 1];
+      const latestLoss = lossHistory.length > 0 ? lossHistory[lossHistory.length - 1] : null;
+      
+      // Log the round result
+      logExperimentRound(user.id, activeSessionId, {
+        round,
+        accuracy: latestAcc,
+        loss: latestLoss,
+        clientsActive: clients.filter(c => c.status === 'ACTIVE' || c.status === 'BUSY').length,
+        rejectedCount,
+        blockchainHash: blockchain.length > 1 ? blockchain[blockchain.length - 1]?.hash : null
+      }).catch(err => console.warn('Round log failed:', err.message));
+
+      // Update session with final results
+      updateTrainingSession(activeSessionId, {
+        status: 'COMPLETE',
+        ended_at: new Date().toISOString(),
+        rounds_completed: round,
+        final_accuracy: latestAcc,
+        final_loss: latestLoss
+      }).catch(err => console.warn('Session update failed:', err.message));
+    }
+  }, [status, user, activeSessionId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#fdfdfb]">
+        <div className="flex flex-col items-center gap-4">
+          <ShieldCheck size={48} className="animate-pulse text-primary opacity-20" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-[#364E68] opacity-40">VERIFYING CREDENTIALS...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login />;
+  }
 
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
         return (
-          <Dashboard 
+          <Dashboard
             accuracyHistory={accuracyHistory}
             isConnected={isConnected}
             isActive={isActive}
@@ -182,27 +209,21 @@ function App() {
             clients={clients}
             rejectedCount={rejectedCount}
             round={round}
-            distributedStatus={distributedStatus}
-            startDistributed={startDistributed}
-            stopDistributed={stopDistributed}
-            refreshDistributedStatus={refreshDistributedStatus}
-            nodeRegistry={nodeRegistry}
-            apiBaseUrl={API_BASE_URL}
           />
         );
       case 'architecture':
         return <ArchitectureBuilder onAction={addToast} />;
       case 'training':
         return (
-          <TrainingWorkspace 
-            clients={clients} 
-            logs={logs} 
-            accuracyHistory={accuracyHistory} 
-            lossHistory={lossHistory} 
-            hyperparams={hyperparams} 
-            roundHistory={roundHistory} 
-            modelArchitecture={modelArchitecture} 
-            onClear={clearLogs} 
+          <TrainingWorkspace
+            clients={clients}
+            logs={logs}
+            accuracyHistory={accuracyHistory}
+            lossHistory={lossHistory}
+            hyperparams={hyperparams}
+            roundHistory={roundHistory}
+            modelArchitecture={modelArchitecture}
+            onClear={clearLogs}
             onInitiate={startSimulation}
             isActive={isActive}
           />
@@ -210,7 +231,14 @@ function App() {
       case 'datasets':
         return <DatasetExplorer shards={shards} clientsActive={clientsActive} />;
       case 'laboratory':
-        return <Laboratory onAction={addToast} labState={labState} />;
+        return (
+          <Laboratory 
+            onAction={addToast} 
+            labState={labState} 
+            onExecuteCommand={executeDashboardCommand}
+            onEvalCode={evalLaboratoryCode}
+          />
+        );
       case 'privacy_vault':
         return <PrivacyVault />;
       default:
@@ -218,9 +246,6 @@ function App() {
     }
   };
 
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
 
   return (
     <div className={`shell-container selection:bg-primary/10 bg-white`}>
@@ -229,7 +254,7 @@ function App() {
       <div className="flex flex-1" style={{ overflow: 'hidden' }}>
         <Sidebar
           currentView={currentView}
-          setView={setCurrentView}
+          setView={handleViewChange}
           clients={clients}
           nodeRegistry={nodeRegistry}
           rejectedCount={rejectedCount}
@@ -244,12 +269,12 @@ function App() {
             {renderView()}
           </div>
 
-          <div 
+          <div
             className="transition-all duration-300 ease-in-out"
-            style={{ 
-              height: (currentView === 'training' || currentView === 'laboratory') 
-                ? 0 
-                : (isTerminalMinimized ? 36 : footerHeight), 
+            style={{
+              height: (currentView === 'training' || currentView === 'laboratory')
+                ? 0
+                : (isTerminalMinimized ? 36 : footerHeight),
               flexShrink: 0,
               overflow: 'hidden'
             }}
@@ -259,13 +284,12 @@ function App() {
               onResize={startTerminalResize}
               isResizing={!!resizingRef.current}
               nodeRegistry={nodeRegistry}
-              accuracyHistory={accuracyHistory}
-              lossHistory={lossHistory}
               roundHistory={roundHistory}
               onClear={clearLogs}
               onAction={(cmd) => addToast(`Terminal command executed: ${cmd}`, 'info')}
               isMinimized={isTerminalMinimized}
               onToggleMinimize={() => setIsTerminalMinimized(!isTerminalMinimized)}
+              onExecuteCommand={executeDashboardCommand}
             />
           </div>
         </main>
