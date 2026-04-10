@@ -1,3 +1,12 @@
+---
+title: Cybronites Secure FL
+emoji: 🛡️
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # 🛡️ Secure Federated Learning — Blockchain & SMPC
 
 A premium, research-grade platform for **Blockchain-Based Secure Federated Learning (BCFL)**. This project implements a comprehensive decentralized ML framework that prioritizes **Privacy**, **Security**, and **Accountability**.
