@@ -29,7 +29,7 @@ from torch.utils.data import DataLoader
 # ─── Logging ───
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s │ %(levelname)-7s │ %(message)s',
+    format='%(asctime)s | %(levelname)-7s | %(message)s',
     datefmt='%H:%M:%S'
 )
 logger = logging.getLogger("CybronitesClient")
@@ -226,24 +226,24 @@ Examples:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     my_ip = get_public_ip()
 
-    # ─── Banner ───
+    # --- Banner ---
     print(f"""
-    ╔══════════════════════════════════════════════════════════╗
-    ║       🛡️  CYBRONITES DISTRIBUTED LEARNING CLIENT         ║
-    ╠══════════════════════════════════════════════════════════╣
-    ║  Server  : {server:<44s}║
-    ║  Device  : {str(device):<44s}║
-    ║  Name    : {args.name:<44s}║
-    ║  IP      : {my_ip:<44s}║
-    ║  Epochs  : {str(args.epochs):<44s}║
-    ╚══════════════════════════════════════════════════════════╝
+    =========================================================
+        CYBRONITES DISTRIBUTED LEARNING CLIENT
+    =========================================================
+      Server  : {server}
+      Device  : {device}
+      Name    : {args.name}
+      IP      : {my_ip}
+      Epochs  : {args.epochs}
+    =========================================================
     """)
 
     # ─── Step 1: Health Check ───
     logger.info("Checking server connectivity...")
     try:
         health = api_call("GET", f"{server}/api/health")
-        logger.info(f"Server ONLINE ✓ (Active connections: {health.get('clients', 0)})")
+        logger.info(f"Server ONLINE [OK] (Active connections: {health.get('clients', 0)})")
     except Exception as e:
         logger.error(f"Cannot reach server at {server}: {e}")
         logger.error("Make sure the server URL is correct and accessible.")
@@ -260,7 +260,7 @@ Examples:
             sys.exit(1)
         
         client_id = reg["client_id"]
-        logger.info(f"✅ Registered! Client ID: {client_id}")
+        logger.info(f"[OK] Registered! Client ID: {client_id}")
         logger.info(f"   Session Status: {reg.get('session_status', 'unknown')}")
     except Exception as e:
         logger.error(f"Registration failed: {e}")
@@ -288,7 +288,7 @@ Examples:
 
             # ── IDLE: No session running ──
             if current_status == "IDLE":
-                sys.stdout.write(f"\r⏳ Waiting for training session to start... (registered as '{args.name}')")
+                sys.stdout.write(f"\r[WAIT] Waiting for training session to start... (registered as '{args.name}')")
                 sys.stdout.flush()
                 time.sleep(3)
                 continue
@@ -296,7 +296,7 @@ Examples:
             # ── COMPLETE: Session finished ──
             if current_status == "COMPLETE":
                 print()
-                logger.info("🏁 Training session COMPLETE!")
+                logger.info("[DONE] Training session COMPLETE!")
                 acc_hist = status.get("accuracy_history", [])
                 if acc_hist:
                     logger.info(f"   Final Accuracy: {acc_hist[-1]:.2%}")
@@ -310,7 +310,7 @@ Examples:
 
             # ── AGGREGATING: Server is processing ──
             if current_status == "AGGREGATING":
-                sys.stdout.write(f"\r⚙️  Round {current_round}: Server aggregating... waiting...")
+                sys.stdout.write(f"\r[SYNC] Round {current_round}: Server aggregating... waiting...")
                 sys.stdout.flush()
                 time.sleep(2)
                 continue
@@ -318,12 +318,12 @@ Examples:
             # ── WAITING: Server needs our update ──
             if current_status == "WAITING" and current_round > last_completed_round:
                 print()  # Newline after status dots
-                logger.info(f"{'═'*55}")
+                logger.info(f"{'='*55}")
                 logger.info(f"  ROUND {current_round}/{total_rounds}")
-                logger.info(f"{'═'*55}")
+                logger.info(f"{'='*55}")
 
                 # Download global model
-                logger.info("📥 Downloading global model from server...")
+                logger.info("[DOWNLOAD] Downloading global model from server...")
                 model_data = api_call("GET", f"{server}/api/v1/distributed/get-model")
 
                 if "error" in model_data:
@@ -336,7 +336,7 @@ Examples:
                     logger.info(f"   Model loaded ({len(model_data['params'])} parameter tensors)")
 
                 # Train locally
-                logger.info(f"🔄 Training locally for {args.epochs} epoch(s)...")
+                logger.info(f"[TRAIN] Training locally for {args.epochs} epoch(s)...")
                 start_time = time.time()
                 train_loss, train_acc = train_local(model, train_loader, device, epochs=args.epochs)
                 train_time = time.time() - start_time
@@ -345,13 +345,13 @@ Examples:
                 logger.info(f"   Duration:      {train_time:.1f}s")
 
                 # Evaluate
-                logger.info("📊 Evaluating on test set...")
+                logger.info("[EVAL] Evaluating on test set...")
                 eval_loss, eval_acc = evaluate(model, test_loader, device)
                 logger.info(f"   Test Loss:     {eval_loss:.4f}")
                 logger.info(f"   Test Accuracy: {eval_acc:.2%}")
 
                 # Submit update
-                logger.info("📤 Submitting trained weights to server...")
+                logger.info("[UPLOAD] Submitting trained weights to server...")
                 submit_data = {
                     "client_id": client_id,
                     "params": model_to_b64(model),
@@ -371,9 +371,9 @@ Examples:
                                   json=submit_data, timeout=180)
                 
                 if result.get("success"):
-                    logger.info(f"✅ Server: {result.get('message', 'OK')}")
+                    logger.info(f"[OK] Server: {result.get('message', 'OK')}")
                 else:
-                    logger.warning(f"⚠️  Server rejected: {result.get('message', 'Unknown error')}")
+                    logger.warning(f"[WARN] Server rejected: {result.get('message', 'Unknown error')}")
 
                 last_completed_round = current_round
                 logger.info("")
@@ -382,7 +382,7 @@ Examples:
 
         except KeyboardInterrupt:
             print()
-            logger.info("👋 Client stopped by user. Goodbye!")
+            logger.info("Client stopped by user. Goodbye!")
             break
         except requests.ConnectionError:
             logger.warning("Connection lost. Retrying in 10s...")
