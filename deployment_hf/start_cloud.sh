@@ -19,16 +19,7 @@ echo "  [INFO] Static dashboard assets: $(ls /app/static 2>/dev/null | wc -l) fi
 echo "  [INFO] Verifying database initialization..."
 python -c "from Cybronites.server.db import init_db; init_db(); print('  [DB] guardian.db ready.')"
 
-# Start Flower gRPC Server in background
-echo "  [1/2] Launching Flower FL Server (Port: $FLOWER_PORT)..."
-python -m Cybronites.server.server --flower_port $FLOWER_PORT --rounds $ROUNDS &
-
-# Wait for Flower to initialize before bridge starts
-sleep 5
-
-# Start FastAPI Bridge (Foreground — serves dashboard + API + WebSocket)
-echo "  [2/2] Launching Guardian Bridge (Port: $PORT)..."
-exec python -m uvicorn Cybronites.server.bridge:app \
-    --host 0.0.0.0 \
-    --port $PORT \
-    --log-level warning
+# Start Unified Server (Flower gRPC + FastAPI Bridge)
+# They must run in the exact same process to share the in-memory WebSocket Bridge
+echo "  [INFO] Launching Unified Server (Bridge on $PORT, Flower on $FLOWER_PORT)..."
+exec python -m Cybronites.server.server --flower_port $FLOWER_PORT --rounds $ROUNDS
