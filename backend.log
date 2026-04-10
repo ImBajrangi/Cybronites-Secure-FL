@@ -280,3 +280,177 @@ I0411 04:34:53.741386  259667 fork_posix.cc:71] Other threads are currently call
 I0411 04:34:58.542012  259667 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
 04:35:06 [WARNING] secure_training_platform.key_manager.manager: Using development master key — NOT FOR PRODUCTION
 04:35:06 [INFO] secure_training_platform.key_manager.manager: Key Manager initialized
+04:35:41 [INFO] GuardianBridge: Dashboard disconnected. Remaining: 4
+04:35:42 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+04:35:42 [INFO] GuardianBridge: Loaded 62 FL nodes from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+04:35:42 [ERROR] GuardianBridge: WS Serialization/Send Error: 
+04:35:42 [INFO] GuardianBridge: Dashboard disconnected. Remaining: 4
+04:35:42 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 4
+04:35:42 [ERROR] GuardianBridge: WS Runtime Error: WebSocket is not connected. Need to call "accept" first.
+04:35:42 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+04:35:42 [INFO] GuardianBridge: Loaded 62 FL nodes from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+04:35:42 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 5
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/datasets → 200 (59.7ms)
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/training_jobs → 200 (50.7ms)
+  [STP] INFO:     127.0.0.1:60420 - "GET /api/v1/datasets HTTP/1.1" 200 OK
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/models → 200 (17.5ms)
+  [STP] INFO:     127.0.0.1:60422 - "GET /api/v1/training_jobs HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60424 - "GET /api/v1/models HTTP/1.1" 200 OK
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/datasets → 200 (45.7ms)
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/models → 200 (31.0ms)
+  [STP] 04:36:01 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/training_jobs → 200 (31.3ms)
+  [STP] INFO:     127.0.0.1:60428 - "GET /api/v1/datasets HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60420 - "GET /api/v1/models HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60430 - "GET /api/v1/training_jobs HTTP/1.1" 200 OK
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04:36:50 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+04:36:50 [INFO] GuardianBridge: Node 265b3e35781447e389616f2c21bb4e4d persisted to database with IP 104.28.157.91.
+04:36:50 [INFO] GuardianBridge: Node fa1ab2327f97445cb4e573dea10452c0 persisted to database with IP 104.28.157.91.
+04:36:50 [INFO] SecureStrategy: Round 1 Synced (Acc: 79.05%)
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04:36:50 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+04:36:50 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 1
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message e8e95188-4c44-4913-870a-13794bade582
+  [CLIENT 0] INFO:flwr:Received: evaluate message e8e95188-4c44-4913-870a-13794bade582
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message c8929525-1ef7-458c-a93b-9229694954f5
+  [CLIENT 1] INFO:flwr:Received: evaluate message c8929525-1ef7-458c-a93b-9229694954f5
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.5224
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.5224
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04:36:59 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+[93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
+04:36:59 [WARNING] flwr: No evaluate_metrics_aggregation_fn provided
+[92mINFO [0m:      
+04:36:59 [INFO] flwr: 
+[92mINFO [0m:      [ROUND 2]
+04:36:59 [INFO] flwr: [ROUND 2]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04:36:59 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: train message fd7049b6-5e44-434d-a586-f1bc7bdf1f09
+  [CLIENT 1] INFO:flwr:Received: train message fd7049b6-5e44-434d-a586-f1bc7bdf1f09
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message fc2d2465-920b-4e2e-90dc-0407611a22f6
+  [CLIENT 0] INFO:flwr:Received: train message fc2d2465-920b-4e2e-90dc-0407611a22f6
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04:37:23 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+04:37:23 [INFO] GuardianBridge: Node 265b3e35781447e389616f2c21bb4e4d persisted to database with IP 104.28.157.91.
+04:37:23 [INFO] GuardianBridge: Node fa1ab2327f97445cb4e573dea10452c0 persisted to database with IP 104.28.157.91.
+04:37:23 [INFO] SecureStrategy: Round 2 Synced (Acc: 83.89%)
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04:37:23 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+04:37:23 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 2
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 24221db4-109e-49f0-ba9e-0747e6e0060c
+  [CLIENT 0] INFO:flwr:Received: evaluate message 24221db4-109e-49f0-ba9e-0747e6e0060c
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message ea14f157-9f51-4767-917f-97ce63680456
+  [CLIENT 1] INFO:flwr:Received: evaluate message ea14f157-9f51-4767-917f-97ce63680456
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.6853
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.6853
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04:37:26 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04:37:26 [INFO] flwr: 
+[92mINFO [0m:      [ROUND 3]
+04:37:26 [INFO] flwr: [ROUND 3]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04:37:26 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: train message 9a970b2d-1ad1-4305-a813-99dcb38b4999
+  [CLIENT 1] INFO:flwr:Received: train message 9a970b2d-1ad1-4305-a813-99dcb38b4999
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message 6bed5e08-9b4b-4ee0-8831-9d065f995c6a
+  [CLIENT 0] INFO:flwr:Received: train message 6bed5e08-9b4b-4ee0-8831-9d065f995c6a
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/datasets → 200 (16.9ms)
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/training_jobs → 200 (10.1ms)
+  [STP] INFO:     127.0.0.1:60479 - "GET /api/v1/datasets HTTP/1.1" 200 OK
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/models → 200 (4.1ms)
+  [STP] INFO:     127.0.0.1:60481 - "GET /api/v1/training_jobs HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60484 - "GET /api/v1/models HTTP/1.1" 200 OK
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/datasets → 200 (10.6ms)
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/training_jobs → 200 (4.4ms)
+  [STP] 04:37:35 │ secure_training_platform.api.middleware │ INFO    │ GET /api/v1/models → 200 (4.5ms)
+  [STP] INFO:     127.0.0.1:60487 - "GET /api/v1/datasets HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60479 - "GET /api/v1/training_jobs HTTP/1.1" 200 OK
+  [STP] INFO:     127.0.0.1:60489 - "GET /api/v1/models HTTP/1.1" 200 OK
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04:37:52 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+04:37:52 [INFO] GuardianBridge: Node fa1ab2327f97445cb4e573dea10452c0 persisted to database with IP 104.28.157.91.
+04:37:52 [INFO] GuardianBridge: Node 265b3e35781447e389616f2c21bb4e4d persisted to database with IP 104.28.157.91.
+04:37:52 [INFO] SecureStrategy: Round 3 Synced (Acc: 86.64%)
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04:37:52 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+04:37:52 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 3
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 47cfeb99-3378-4515-bba0-8c5ea54154e1
+  [CLIENT 0] INFO:flwr:Received: evaluate message 47cfeb99-3378-4515-bba0-8c5ea54154e1
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 51f5a873-c768-433e-acfa-bd6da76aad2f
+  [CLIENT 1] INFO:flwr:Received: evaluate message 51f5a873-c768-433e-acfa-bd6da76aad2f
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.8351
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.8351
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04:37:56 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04:37:56 [INFO] flwr: 
+[92mINFO [0m:      [ROUND 4]
+04:37:56 [INFO] flwr: [ROUND 4]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04:37:56 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message 060449a8-ddf4-4720-9310-4dc598d652b8
+  [CLIENT 0] INFO:flwr:Received: train message 060449a8-ddf4-4720-9310-4dc598d652b8
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: train message 7d8a580c-a99e-4f19-86c9-ac2c0b995bc5
+  [CLIENT 1] INFO:flwr:Received: train message 7d8a580c-a99e-4f19-86c9-ac2c0b995bc5
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
