@@ -144,37 +144,37 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0, roundHistory =
             className="ds-grid"
           >
             {filteredShards.length > 0 ? filteredShards.map((shard, idx) => {
-              const loadPct = Math.round((shard.load || 0) * 100);
-              const regionColor = regionColors[shard.region] || '#6366f1';
+              const trustPct = Math.min(Math.round((shard.trust_score || 0) / 1.5), 100);
               const statusColor = statusColors[shard.status] || '#6b7280';
+              const lastSeen = shard.last_seen ? new Date(shard.last_seen).toLocaleString() : '—';
 
               return (
                 <motion.div
-                  key={shard.id}
+                  key={shard.id + idx}
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.06 }}
+                  transition={{ delay: idx * 0.04 }}
                   className="ds-card"
                   onClick={() => setExpandedCard(expandedCard === shard.id ? null : shard.id)}
                 >
                   <div className="ds-card-head">
                     <div className="ds-card-tag-row">
-                      <span className="ds-card-tag">{shard.id}</span>
+                      <span className="ds-card-tag">{shard.name || 'FL_Node'}</span>
                       <span className="ds-card-status" style={{ color: statusColor, borderColor: statusColor + '33' }}>
                         <span className="ds-status-dot" style={{ background: statusColor }} />
                         {shard.status || 'UNKNOWN'}
                       </span>
                     </div>
-                    <h3 className="ds-card-name">{shard.name || shard.org || 'Unnamed Shard'}</h3>
+                    <h3 className="ds-card-name" style={{ fontSize: '13px', fontFamily: 'var(--font-mono)' }}>{shard.ip_address || '—'}</h3>
                     <div className="ds-card-meta">
                       <span className="ds-meta-item">
-                        <Globe size={9} />
-                        <span style={{ color: regionColor }}>{shard.region || '—'}</span>
+                        <Lock size={9} />
+                        {shard.encryption || 'AES-256-GCM'}
                       </span>
                       <span className="ds-meta-item">
-                        <Lock size={9} />
-                        {shard.encryption || 'AES-256'}
+                        <Activity size={9} />
+                        Trust: {shard.trust_score || 0}
                       </span>
                     </div>
                   </div>
@@ -182,19 +182,27 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0, roundHistory =
                   <div className="ds-card-body">
                     <div className="ds-load-section">
                       <div className="ds-load-header">
-                        <span className="ds-load-label">Shard Load</span>
-                        <span className="ds-load-value">{loadPct}%</span>
+                        <span className="ds-load-label">Trust Score</span>
+                        <span className="ds-load-value">{shard.trust_score || 0}</span>
                       </div>
                       <div className="ds-load-track">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${loadPct}%` }}
+                          animate={{ width: `${trustPct}%` }}
                           transition={{ duration: 0.8, ease: 'easeOut' }}
                           className="ds-load-fill"
-                          style={{ background: loadPct > 80 ? '#f59e0b' : 'var(--primary)' }}
+                          style={{ background: trustPct >= 80 ? '#22c55e' : trustPct >= 50 ? '#f59e0b' : '#ef4444' }}
                         />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="ds-card-foot">
+                    <span className="ds-foot-hint" style={{ fontSize: '8px', opacity: 0.5 }}>{lastSeen}</span>
+                    <span className="ds-foot-badge" style={{ color: 'var(--text-muted)' }}>
+                      <Cpu size={9} />
+                      <span>{shard.id}</span>
+                    </span>
                   </div>
 
                   <AnimatePresence>
@@ -206,20 +214,24 @@ export const DatasetExplorer = ({ shards = [], clientsActive = 0, roundHistory =
                         className="ds-card-expanded"
                       >
                         <div className="ds-exp-row">
-                          <span className="ds-exp-label">Shard ID</span>
+                          <span className="ds-exp-label">Node ID</span>
                           <span className="ds-exp-value ds-mono">{shard.id}</span>
                         </div>
                         <div className="ds-exp-row">
-                          <span className="ds-exp-label">Region</span>
-                          <span className="ds-exp-value">{shard.region}</span>
+                          <span className="ds-exp-label">IP Address</span>
+                          <span className="ds-exp-value ds-mono">{shard.ip_address}</span>
+                        </div>
+                        <div className="ds-exp-row">
+                          <span className="ds-exp-label">Trust Score</span>
+                          <span className="ds-exp-value">{shard.trust_score}</span>
+                        </div>
+                        <div className="ds-exp-row">
+                          <span className="ds-exp-label">Last Active</span>
+                          <span className="ds-exp-value">{lastSeen}</span>
                         </div>
                         <div className="ds-exp-row">
                           <span className="ds-exp-label">Encryption</span>
                           <span className="ds-exp-value">{shard.encryption}</span>
-                        </div>
-                        <div className="ds-exp-row">
-                          <span className="ds-exp-label">Density</span>
-                          <span className="ds-exp-value">{loadPct}%</span>
                         </div>
                       </motion.div>
                     )}

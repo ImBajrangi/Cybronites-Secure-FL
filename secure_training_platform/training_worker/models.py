@@ -157,19 +157,31 @@ def create_model(model_type: str, input_channels: int = 1,
         model_type: One of 'SimpleCNN', 'ResNet18', 'MLP'
         input_channels: Number of input channels (1 for grayscale, 3 for RGB)
         num_classes: Number of output classes
-        input_shape: [channels, height, width]
+        input_shape: Variable length — [features], [C, H, W], etc.
     """
     if model_type not in MODEL_REGISTRY:
         raise ValueError(
             f"Unknown model '{model_type}'. Available: {list(MODEL_REGISTRY.keys())}"
         )
-    
+
+    h, w = 28, 28
+
     if input_shape:
-        input_channels = input_shape[0]
-        h, w = input_shape[1], input_shape[2]
-    else:
-        h, w = 28, 28
-    
+        if len(input_shape) == 1:
+            input_channels = 1
+            h = input_shape[0]
+            w = 1
+            if model_type in ("SimpleCNN", "ResNet18"):
+                model_type = "MLP"
+        elif len(input_shape) == 2:
+            input_channels = 1
+            h = input_shape[0]
+            w = input_shape[1]
+        elif len(input_shape) >= 3:
+            input_channels = input_shape[0]
+            h = input_shape[1]
+            w = input_shape[2]
+
     return MODEL_REGISTRY[model_type](
         input_channels=input_channels,
         num_classes=num_classes,

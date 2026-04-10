@@ -81,7 +81,7 @@ class ConnectionManager:
             # Fallback to local
             self.state["server_ip"] = "127.0.0.1"
     def load_db_shards(self):
-        """Fetches real institutional shards from guardian.db."""
+        """Fetches real FL node data from guardian.db nodes table."""
         try:
             paths = [
                 os.path.join(os.getcwd(), "Cybronites", "guardian.db"),
@@ -92,20 +92,34 @@ class ConnectionManager:
                 if os.path.exists(p):
                     db_path = p
                     break
-            
+
             if not db_path:
                 return
-            
+
             conn = sqlite3.connect(db_path)
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
-            cur.execute("SELECT * FROM shards")
-            rows = [dict(row) for row in cur.fetchall()]
+            cur.execute(
+                """SELECT id, name, ip_address, trust_score, last_seen
+                   FROM nodes ORDER BY last_seen DESC"""
+            )
+            rows = []
+            for row in cur.fetchall():
+                r = dict(row)
+                rows.append({
+                    "id": r.get("id", "")[:12],
+                    "name": r.get("name", "Unknown"),
+                    "ip_address": r.get("ip_address", "—"),
+                    "trust_score": r.get("trust_score", 0),
+                    "last_seen": r.get("last_seen", "—"),
+                    "status": "ACTIVE" if r.get("trust_score", 0) >= 100 else "DEGRADED",
+                    "encryption": "AES-256-GCM",
+                })
             self.state["shards"] = rows
             conn.close()
-            logger.info(f"Loaded {len(rows)} shards from {db_path}")
+            logger.info(f"Loaded {len(rows)} FL nodes from {db_path}")
         except Exception as e:
-            logger.error(f"DB Shard Load Error: {e}")
+            logger.error(f"DB Node Load Error: {e}")
 
     def save_node_to_db(self, node_id, ip, trust_score):
         """Persist node metadata to the institutional record."""
