@@ -18,8 +18,8 @@ export const Login = ({ onLogin }) => {
     //   https://your-username-cybronites-fl.hf.space
     // In development, proxy via Vite to localhost backend.
     if (import.meta.env.PROD) {
-      // Use explicit backend URL if set, otherwise fall back to same origin (for self-hosted)
-      url = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+      // Use explicit backend URL if set, otherwise fall back to explicit HF space URL
+      url = import.meta.env.VITE_BACKEND_URL || 'https://rishuuuuuu-cybronites-secure-fl.hf.space';
     } else {
       const port = import.meta.env.VITE_BACKEND_PORT || '7880';
       url = `http://localhost:${port}`;

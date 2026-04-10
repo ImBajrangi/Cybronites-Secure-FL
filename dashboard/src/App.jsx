@@ -107,7 +107,7 @@ function App() {
 
       try {
         let baseUrl = import.meta.env.PROD 
-          ? (import.meta.env.VITE_BACKEND_URL || window.location.origin)
+          ? (import.meta.env.VITE_BACKEND_URL || 'https://rishuuuuuu-cybronites-secure-fl.hf.space')
           : `http://localhost:${import.meta.env.VITE_BACKEND_PORT || '7880'}`;
         baseUrl = baseUrl.replace(/\/+$/, '');
         const response = await fetch(`${baseUrl}/api/auth/me?token=${token}`);
