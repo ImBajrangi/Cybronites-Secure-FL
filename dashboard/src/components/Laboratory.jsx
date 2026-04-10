@@ -990,7 +990,8 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
                 <div className="lab-dep-badges">
                   {detectedDeps.length > 0 ? (
                     detectedDeps.map((dep, idx) => {
-                      const isInstalled = envData?.packages?.some(p => p.name.toLowerCase() === dep.toLowerCase());
+                      const allPkgs = envData?.all_packages || envData?.packages || [];
+                      const isInstalled = allPkgs.some(p => p.name.toLowerCase() === dep.toLowerCase());
                       const isCurrentlyInstalling = isInstalling && installingPackages.includes(dep);
                       return (
                         <div
@@ -1015,7 +1016,8 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
                   )}
                 </div>
                 {(() => {
-                  const missing = detectedDeps.filter(dep => !envData?.packages?.some(p => p.name.toLowerCase() === dep.toLowerCase()));
+                  const allPkgs = envData?.all_packages || envData?.packages || [];
+                  const missing = detectedDeps.filter(dep => !allPkgs.some(p => p.name.toLowerCase() === dep.toLowerCase()));
                   if (missing.length === 0) return null;
                   return (
                     <button onClick={() => runPipInstall(missing)} disabled={isInstalling} className="lab-install-all-btn">
