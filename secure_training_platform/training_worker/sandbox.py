@@ -92,37 +92,38 @@ class TrainingSandbox:
             dataset_info = self.vault.get_dataset_info(dataset_id)
             raw_data = pickle.loads(decrypted_buffer.read())
             
-            # Immediately wipe the decrypted buffer
             secure_wipe_buffer(decrypted_buffer)
             decrypted_buffer = None
             
-            # Extract tensors from the parsed data
+            num_classes = dataset_info.get("num_classes", 10)
+            input_shape = dataset_info.get("input_shape", [1, 28, 28])
+            is_classification = num_classes > 0
+            label_dtype = torch.long if is_classification else torch.float32
+            
             if isinstance(raw_data, dict):
                 train_data = torch.tensor(raw_data["data"], dtype=torch.float32)
-                train_labels = torch.tensor(raw_data["labels"], dtype=torch.long)
+                train_labels = torch.tensor(raw_data["labels"], dtype=label_dtype)
             elif isinstance(raw_data, tuple) and len(raw_data) == 2:
                 train_data = torch.tensor(raw_data[0], dtype=torch.float32)
-                train_labels = torch.tensor(raw_data[1], dtype=torch.long)
+                train_labels = torch.tensor(raw_data[1], dtype=label_dtype)
             else:
                 raise ValueError("Unsupported dataset format")
             
-            # Clear the raw parsed data
             del raw_data
             
-            # Normalize data to [0, 1]
-            if train_data.max() > 1.0:
+            is_image = len(input_shape) >= 3
+            if is_image and train_data.max() > 1.0:
                 train_data = train_data / 255.0
             
-            # Reshape if needed: ensure [N, C, H, W]
-            input_shape = dataset_info.get("input_shape", [1, 28, 28])
-            if len(train_data.shape) == 3:
-                train_data = train_data.unsqueeze(1)  # Add channel dim
-            
-            num_classes = dataset_info.get("num_classes", 10)
+            if is_image and len(train_data.shape) == 3:
+                train_data = train_data.unsqueeze(1)
+            elif not is_image and len(train_data.shape) == 1:
+                train_data = train_data.unsqueeze(1)
             
             logger.info(
                 f"[Job {job_id}] Data shape: {train_data.shape}, "
-                f"Labels: {train_labels.shape}, Classes: {num_classes}"
+                f"Labels: {train_labels.shape}, Classes: {num_classes}, "
+                f"Mode: {'classification' if is_classification else 'regression'}"
             )
             
             # ── Step 3: Create data loader ─────────────────────
@@ -140,15 +141,14 @@ class TrainingSandbox:
             
             # ── Step 4: Create model ───────────────────────────
             model = create_model(
-                model_type, num_classes=num_classes, input_shape=input_shape
+                model_type, num_classes=max(num_classes, 1), input_shape=input_shape
             )
             model = model.to(self.device)
             
-            criterion = nn.CrossEntropyLoss()
+            criterion = nn.CrossEntropyLoss() if is_classification else nn.MSELoss()
             optimizer = optim.Adam(model.parameters(), lr=learning_rate)
             scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
             
-            # ── Step 5: Training loop ──────────────────────────
             logger.info(f"[Job {job_id}] Training {model_type} for {epochs} epochs...")
             best_accuracy = 0.0
             best_loss = float('inf')
@@ -165,19 +165,22 @@ class TrainingSandbox:
                     
                     optimizer.zero_grad()
                     outputs = model(batch_x)
+                    if not is_classification:
+                        outputs = outputs.squeeze()
                     loss = criterion(outputs, batch_y)
                     loss.backward()
                     optimizer.step()
                     
                     running_loss += loss.item()
-                    _, predicted = outputs.max(1)
-                    total += batch_y.size(0)
-                    correct += predicted.eq(batch_y).sum().item()
+                    if is_classification:
+                        _, predicted = outputs.max(1)
+                        total += batch_y.size(0)
+                        correct += predicted.eq(batch_y).sum().item()
                 
                 scheduler.step()
                 
                 train_loss = running_loss / len(train_loader)
-                train_acc = 100.0 * correct / total
+                train_acc = (100.0 * correct / total) if total > 0 else 0.0
                 
                 # Validation
                 val_acc, val_loss = self._evaluate(model, val_loader, criterion)
@@ -272,6 +275,7 @@ class TrainingSandbox:
         val_loss = 0.0
         correct = 0
         total = 0
+        is_cls = isinstance(criterion, nn.CrossEntropyLoss)
         
         with torch.no_grad():
             for batch_x, batch_y in val_loader:
@@ -279,13 +283,16 @@ class TrainingSandbox:
                 batch_y = batch_y.to(self.device)
                 
                 outputs = model(batch_x)
+                if not is_cls:
+                    outputs = outputs.squeeze()
                 loss = criterion(outputs, batch_y)
                 
                 val_loss += loss.item()
-                _, predicted = outputs.max(1)
-                total += batch_y.size(0)
-                correct += predicted.eq(batch_y).sum().item()
+                if is_cls:
+                    _, predicted = outputs.max(1)
+                    total += batch_y.size(0)
+                    correct += predicted.eq(batch_y).sum().item()
         
         avg_loss = val_loss / max(len(val_loader), 1)
-        accuracy = 100.0 * correct / max(total, 1)
+        accuracy = (100.0 * correct / max(total, 1)) if is_cls else 0.0
         return accuracy, avg_loss
