@@ -500,3 +500,10 @@ I0411 04:34:58.542012  259667 fork_posix.cc:71] Other threads are currently call
   [CLIENT 0] INFO:flwr:Received: train message 98130e09-52ec-4337-8338-de54f4638bff
   [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [STP] INFO:     Shutting down
+  [STP] INFO:     Waiting for application shutdown.
+  [STP] 04:38:34 │ secure_training_platform.main  │ INFO    │ Shutting down training worker...
+  [STP] 04:38:34 │ secure_training_platform.training_worker.worker │ INFO    │ Training worker stopped
+  [STP] 04:38:34 │ secure_training_platform.main  │ INFO    │ Platform shutdown complete
+  [STP] INFO:     Application shutdown complete.
+  [STP] INFO:     Finished server process [20818]
