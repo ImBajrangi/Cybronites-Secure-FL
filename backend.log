@@ -454,3 +454,49 @@ I0411 04:34:58.542012  259667 fork_posix.cc:71] Other threads are currently call
   [CLIENT 1] INFO:flwr:Received: train message 7d8a580c-a99e-4f19-86c9-ac2c0b995bc5
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
   [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04:38:19 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+04:38:19 [INFO] GuardianBridge: Node fa1ab2327f97445cb4e573dea10452c0 persisted to database with IP 104.28.157.91.
+04:38:19 [INFO] GuardianBridge: Node 265b3e35781447e389616f2c21bb4e4d persisted to database with IP 104.28.157.91.
+04:38:19 [INFO] SecureStrategy: Round 4 Synced (Acc: 88.16%)
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04:38:19 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+04:38:19 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 4
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message b25dfaac-8ba3-4cad-b56a-82a8fec18317
+  [CLIENT 1] INFO:flwr:Received: evaluate message b25dfaac-8ba3-4cad-b56a-82a8fec18317
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message a2614be3-db31-46cf-af6b-09b903f5465b
+  [CLIENT 0] INFO:flwr:Received: evaluate message a2614be3-db31-46cf-af6b-09b903f5465b
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.9216
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.9216
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04:38:22 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04:38:22 [INFO] flwr: 
+[92mINFO [0m:      [ROUND 5]
+04:38:22 [INFO] flwr: [ROUND 5]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04:38:22 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: train message aa64f5a3-b332-4c9f-aa27-0bacec8eae4d
+  [CLIENT 1] INFO:flwr:Received: train message aa64f5a3-b332-4c9f-aa27-0bacec8eae4d
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message 98130e09-52ec-4337-8338-de54f4638bff
+  [CLIENT 0] INFO:flwr:Received: train message 98130e09-52ec-4337-8338-de54f4638bff
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
