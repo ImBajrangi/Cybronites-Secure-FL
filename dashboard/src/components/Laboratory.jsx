@@ -80,6 +80,38 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
   const [isEvaluating, setIsEvaluating] = useState(false);
   const terminalRef = useRef(null);
 
+  // Console resize state
+  const [consoleHeight, setConsoleHeight] = useState(280);
+  const resizeRef = useRef({ dragging: false, startY: 0, startH: 0 });
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!resizeRef.current.dragging) return;
+      const delta = resizeRef.current.startY - e.clientY;
+      const newH = Math.min(600, Math.max(120, resizeRef.current.startH + delta));
+      setConsoleHeight(newH);
+    };
+    const onMouseUp = () => {
+      if (resizeRef.current.dragging) {
+        resizeRef.current.dragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
+  const startConsoleResize = (e) => {
+    resizeRef.current = { dragging: true, startY: e.clientY, startH: consoleHeight };
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+  };
+
   // Package Installation State
   const [isInstalling, setIsInstalling] = useState(false);
   const [installingPackages, setInstallingPackages] = useState([]);
@@ -320,12 +352,36 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
   };
 
   const handleTrain = async () => {
-    if (status !== 'READY' && status !== 'COMPLETE' && status !== 'IDLE') {
-      onAction('Code must be verified before training.', 'error');
+    if (status === 'TRAINING') return;
+
+    // Auto-validate before training
+    setStatus('COMPILING');
+    addLog('Auto-validating code before training...', 'info');
+    setErrorLine(null);
+    
+    try {
+      const valResponse = await fetch(`${API_BASE_URL}/api/v1/laboratory/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const valData = await valResponse.json();
+      
+      if (!valData.success) {
+        setStatus('ERROR');
+        setErrorLine(valData.line || null);
+        addLog(`[${valData.type || 'Error'}] Line ${valData.line || '?'}: ${valData.error}`, 'error');
+        return;
+      }
+    } catch (err) {
+      setStatus('ERROR');
+      addLog('Could not connect to validation service.', 'error');
       return;
     }
+
+    // Validation passed — start training
     setStatus('TRAINING');
-    addLog(`Starting training(Epochs: ${epochs}, LR: ${lr}, Batch: ${batchSize})...`, 'info');
+    addLog(`Starting execution (Epochs: ${epochs}, LR: ${lr}, Batch: ${batchSize})...`, 'info');
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/laboratory/train`, {
         method: 'POST',
@@ -335,7 +391,7 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
       const data = await response.json();
       if (!data.success) {
         setStatus('ERROR');
-        addLog(`Failed to start training: ${data.message} `, 'error');
+        addLog(`Failed to start training: ${data.message}`, 'error');
       }
     } catch (err) {
       setStatus('ERROR');
@@ -975,7 +1031,8 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
           </AnimatePresence>
 
           {/* ─── Compiler Console ─── */}
-          <div className="lab-panel lab-console-panel">
+          <div className="lab-panel lab-console-panel" style={{ height: consoleHeight, minHeight: 120 }}>
+            <div className="lab-console-resize-handle" onMouseDown={startConsoleResize} />
             <div className="lab-panel-header">
               <Terminal size={14} />
               <span>Compiler Console</span>
@@ -1901,10 +1958,27 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
 
         /* ─── Console ─── */
         .lab-console-panel {
-          flex: 1;
           display: flex;
           flex-direction: column;
-          min-height: 200px;
+          min-height: 120px;
+          flex-shrink: 0;
+          position: relative;
+        }
+        .lab-console-resize-handle {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 6px;
+          cursor: ns-resize;
+          z-index: 10;
+          background: transparent;
+          transition: background 0.15s;
+        }
+        .lab-console-resize-handle:hover,
+        .lab-console-resize-handle:active {
+          background: var(--primary);
+          opacity: 0.4;
         }
         .lab-clear-btn {
           margin-left: auto;

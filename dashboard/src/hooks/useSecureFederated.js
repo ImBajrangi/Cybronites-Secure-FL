@@ -105,11 +105,12 @@ export function useSecureFederated() {
         case 'LAB_PROGRESS': {
           setLabState(prev => ({
             ...prev,
-            status: 'TRAINING',
+            status: payload.status || 'TRAINING',
             progress: payload.progress,
             epoch: payload.epoch,
             loss: payload.loss,
-            accuracy: payload.accuracy
+            accuracy: payload.accuracy,
+            mode: payload.mode || 'FEDERATED'
           }));
           break;
         }
@@ -127,7 +128,7 @@ export function useSecureFederated() {
         }
 
         case 'LAB_ERROR': {
-          setLabState(prev => ({ ...prev, status: 'ERROR', error: payload.error }));
+          setLabState(prev => ({ ...prev, status: 'ERROR', error: payload.error, errorLine: payload.line }));
           break;
         }
 
