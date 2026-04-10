@@ -4,50 +4,61 @@ import {
   Code, Play, ShieldCheck, Terminal, Zap,
   AlertCircle, RefreshCw, Download, BarChart2,
   Activity, Settings, CheckCircle2, StopCircle, Cpu, Box,
-  ChevronRight, Package, Loader2
+  ChevronRight, Package, Loader2, Database, Lock, Copy, Shield
 } from 'lucide-react';
 import { API_BASE_URL } from '../hooks/useSecureFederated';
 
-const DEFAULT_MODEL_CODE = `# Federated Learning - Institutional Sandbox v1.5
-# ----------------------------------------------
-# Type '!pip install [package]' to add libraries.
-# Type '!ls' to scout the filesystem.
-# ----------------------------------------------
+const DEFAULT_MODEL_CODE = `# ╔══════════════════════════════════════════════════╗
+# ║  Federated Learning — Secure Training Sandbox   ║
+# ║  v2.0 | Privacy Vault Enabled                   ║
+# ╚══════════════════════════════════════════════════╝
+#
+# AVAILABLE COMMANDS:
+#   vault.list()                  → View all encrypted datasets
+#   vault.load("Iris")            → Decrypt dataset to RAM (numpy)
+#   vault.load_torch("Digits")    → Decrypt dataset to RAM (PyTorch)
+#   !pip install [pkg]            → Install a package
+#   !ls                           → List files
+#
+# HOW IT WORKS:
+#   1. Click a dataset from "Vault Datasets" panel →
+#   2. Your model trains on encrypted vault data
+#   3. After training, decrypted data is wiped from RAM
+# ─────────────────────────────────────────────────
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
-import matplotlib.pyplot as plt
 import numpy as np
 
-# -- - Standard Implementation-- -
+# ── Step 1: Load encrypted dataset from Privacy Vault ──
+data, labels, info = vault.load("Iris")
+print(f"🔐 Decrypted: {info['name']} → {data.shape[0]} samples, {info['num_classes']} classes")
+print(f"   Features: {info.get('feature_names', 'N/A')}")
 
-class SecureNodeModel(nn.Module):
-  def __init__(self):
-    super(SecureNodeModel, self).__init__()
-    self.conv1 = nn.Conv2d(1, 32, 3, 1)
-    self.conv2 = nn.Conv2d(32, 64, 3, 1)
-    self.dropout1 = nn.Dropout(0.25)
-    self.fc1 = nn.Linear(9216, 128)
-    self.fc2 = nn.Linear(128, 10)
+# ── Step 2: Define your model ──
+class IrisClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(4, 64),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, 3)    # 3 classes: Setosa, Versicolor, Virginica
+        )
 
-  def forward(self, x):
-    x = torch.relu(self.conv1(x))
-    x = torch.relu(self.conv2(x))
-    x = torch.max_pool2d(x, 2)
-    x = self.dropout1(x)
-    x = torch.flatten(x, 1)
-    x = torch.relu(self.fc1(x))
-    return self.fc2(x)
+    def forward(self, x):
+        return self.net(x)
 
-  def train(epochs = 5, lr = 0.01, batch_size = 32):
-    # Dummy function for AST detection
+# ── Hyperparameters (adjust in sidebar) ──
+def train(epochs=10, lr=0.001, batch_size=32):
     pass
 
-print("🧪 Federated Sandbox Ready.")
+print("🧪 Model ready. Press ▶ RUN to train on vault data.")
+print("   Data stays encrypted at rest — decrypted in RAM only during training.")
 `;
+
 
 export default function Laboratory({ onAction, labState, onExecuteCommand, onEvalCode }) {
   const [code, setCode] = useState(DEFAULT_MODEL_CODE);
@@ -83,6 +94,11 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
   // Console resize state
   const [consoleHeight, setConsoleHeight] = useState(280);
   const resizeRef = useRef({ dragging: false, startY: 0, startH: 0 });
+
+  // Vault Datasets
+  const [vaultDatasets, setVaultDatasets] = useState([]);
+  const [isVaultLoading, setIsVaultLoading] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState(null);
 
   useEffect(() => {
     const onMouseMove = (e) => {
@@ -230,9 +246,30 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
     }
   };
 
+  const fetchVaultDatasets = async () => {
+    setIsVaultLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/laboratory/vault-datasets`);
+      const data = await res.json();
+      if (data.success) setVaultDatasets(data.datasets || []);
+    } catch (err) {
+      console.error('Failed to fetch vault datasets:', err);
+    } finally {
+      setIsVaultLoading(false);
+    }
+  };
+
+  const insertVaultSnippet = (dsName) => {
+    const snippet = `\n# Load encrypted dataset from Privacy Vault\ndata, labels, info = vault.load("${dsName}")\nprint(f"Loaded {info['name']}: {data.shape[0]} samples, {info['num_classes']} classes")\n`;
+    setCode(prev => prev + snippet);
+    setCopiedSnippet(dsName);
+    setTimeout(() => setCopiedSnippet(null), 2000);
+  };
+
   useEffect(() => {
     fetchEnvironment();
-    const interval = setInterval(fetchEnvironment, 45000); // 🧪 Reduced polling frequency as requested
+    fetchVaultDatasets();
+    const interval = setInterval(fetchEnvironment, 45000);
     return () => clearInterval(interval);
   }, []);
 
@@ -1000,6 +1037,71 @@ export default function Laboratory({ onAction, labState, onExecuteCommand, onEva
               {envData && (
                 <button onClick={handlePurgeSandbox} className="lab-env-purge-btn">Purge Sandbox</button>
               )}
+            </div>
+          </div>
+
+          {/* ─── Vault Datasets Panel ─── */}
+          <div className="lab-panel">
+            <div className="lab-panel-header" style={{ padding: '8px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Shield size={13} style={{ color: 'var(--primary)' }} />
+                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Vault Datasets</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '8px', fontWeight: 600, opacity: 0.4 }}>{vaultDatasets.length} ENCRYPTED</span>
+                <button onClick={fetchVaultDatasets} style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, padding: '2px' }}>
+                  <RefreshCw size={10} className={isVaultLoading ? 'lab-spin' : ''} style={{ color: 'var(--text-muted)' }} />
+                </button>
+              </div>
+            </div>
+            <div style={{ padding: '8px', maxHeight: '260px', overflowY: 'auto' }}>
+              {vaultDatasets.length === 0 ? (
+                <div style={{ padding: '20px 10px', textAlign: 'center', fontSize: '9px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  {isVaultLoading ? 'Loading encrypted datasets...' : 'No datasets in vault. Start STP server.'}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {vaultDatasets.map((ds, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => insertVaultSnippet(ds.name)}
+                      style={{
+                        padding: '8px 10px',
+                        background: copiedSnippet === ds.name ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.02)',
+                        border: copiedSnippet === ds.name ? '1px solid rgba(34,197,94,0.3)' : '1px solid var(--border)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.06)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.2)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = copiedSnippet === ds.name ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = copiedSnippet === ds.name ? 'rgba(34,197,94,0.3)' : 'var(--border)'; }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <Lock size={9} style={{ color: 'var(--primary)', opacity: 0.7 }} />
+                          <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-main)' }}>{ds.name}</span>
+                        </div>
+                        {copiedSnippet === ds.name ? (
+                          <CheckCircle2 size={10} style={{ color: 'rgb(34,197,94)' }} />
+                        ) : (
+                          <Copy size={9} style={{ opacity: 0.3 }} />
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', fontSize: '8px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                        <span>{ds.samples?.toLocaleString()} samples</span>
+                        <span>·</span>
+                        <span>{ds.classes > 0 ? `${ds.classes} classes` : 'regression'}</span>
+                        <span>·</span>
+                        <span>shape {JSON.stringify(ds.shape)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{ marginTop: '8px', padding: '6px 8px', background: 'rgba(99,102,241,0.04)', borderRadius: '4px', display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
+                <Zap size={9} style={{ marginTop: '2px', color: 'var(--primary)', flexShrink: 0 }} />
+                <span style={{ fontSize: '8px', color: 'var(--text-muted)', lineHeight: '1.4' }}>Click a dataset to insert <code style={{ background: 'rgba(255,255,255,0.05)', padding: '1px 3px', borderRadius: '2px' }}>vault.load()</code> into your code. Data decrypts in RAM only during training.</span>
+              </div>
             </div>
           </div>
 

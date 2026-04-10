@@ -21,7 +21,7 @@ from secure_training_platform.database.db import execute_query, execute_insert
 logger = logging.getLogger(__name__)
 
 # Roles allowed to retrieve decryption keys
-AUTHORIZED_ROLES = {"training_worker", "system"}
+AUTHORIZED_ROLES = {"training_worker", "system", "laboratory"}
 
 
 class KeyManager:

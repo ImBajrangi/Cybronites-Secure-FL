@@ -481,6 +481,16 @@ async def abort_lab_training():
 async def get_lab_status():
     return engine.get_session_status()
 
+@app.get("/api/v1/laboratory/vault-datasets")
+async def get_vault_datasets():
+    try:
+        from Cybronites.server.vault_loader import VaultLoader
+        loader = VaultLoader()
+        ds_list = loader.list()
+        return {"success": True, "datasets": ds_list}
+    except Exception as e:
+        return {"success": False, "datasets": [], "error": str(e)}
+
 @app.get("/api/v1/laboratory/download/{file_format}")
 async def download_model(file_format: str):
     session = engine._current_session
