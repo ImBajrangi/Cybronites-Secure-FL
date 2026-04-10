@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  LayoutDashboard, Database, ShieldCheck, Terminal, Activity, Layers,
+  LayoutDashboard, Database, ShieldCheck, Terminal, Activity,
   History, Workflow, Cpu, BookOpen, PieChart, Server, ChevronRight, LogOut, User
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -34,8 +34,7 @@ export const Sidebar = ({ currentView, setView, clients = [], nodeRegistry = {},
     { id: 'dashboard', label: 'Academic Progress', num: '01', icon: LayoutDashboard },
     { id: 'training', label: 'Training Cluster', num: '02', icon: Activity },
     { id: 'datasets', label: 'Shard Registry', num: '03', icon: Database },
-    { id: 'architecture', label: 'Model Library', num: '04', icon: Layers },
-    { id: 'privacy_vault', label: 'Privacy Vault', num: '06', icon: ShieldCheck },
+    { id: 'privacy_vault', label: 'Privacy Vault', num: '04', icon: ShieldCheck },
     { id: 'laboratory', label: 'Code Laboratory', num: '05', icon: Terminal },
   ];
 
