@@ -501,6 +501,122 @@ async def download_model(file_format: str):
         
     return FileResponse(path, filename=filename)
 
+@app.post("/api/v1/laboratory/purge")
+async def purge_sandbox():
+    """Clear sandbox cached data: exported models and pip cache."""
+    try:
+        import shutil
+        purged = []
+        
+        # Clear exported models
+        exports_dir = os.path.join(os.getcwd(), "exports")
+        if os.path.exists(exports_dir):
+            shutil.rmtree(exports_dir)
+            os.makedirs(exports_dir)
+            purged.append("exports")
+        
+        # Clear pip cache
+        pip_cache = os.path.expanduser("~/.cache/pip")
+        if os.path.exists(pip_cache):
+            shutil.rmtree(pip_cache)
+            purged.append("pip_cache")
+        
+        # Clear __pycache__ in workspace
+        for root, dirs, files in os.walk(os.getcwd()):
+            for d in dirs:
+                if d == "__pycache__":
+                    shutil.rmtree(os.path.join(root, d), ignore_errors=True)
+            # Don't recurse into .git or node_modules
+            dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules', 'venv', '.venv')]
+        purged.append("__pycache__")
+        
+        logger.info(f"Sandbox purged: {purged}")
+        return {"success": True, "purged": purged}
+    except Exception as e:
+        logger.error(f"Purge failed: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/v1/laboratory/environment")
+async def get_lab_environment():
+    """Return sandbox environment info: Python version, installed packages."""
+    import sys as _sys
+    import subprocess
+    
+    try:
+        # Get Python version
+        python_version = f"{_sys.version_info.major}.{_sys.version_info.minor}.{_sys.version_info.micro}"
+        
+        # Get installed packages via pip
+        result = subprocess.run(
+            [_sys.executable, "-m", "pip", "list", "--format=json"],
+            capture_output=True, text=True, timeout=15
+        )
+        
+        all_packages = []
+        root_packages = []
+        if result.returncode == 0:
+            import json as _json
+            pkgs = _json.loads(result.stdout)
+            all_packages = [{"name": p["name"], "version": p["version"]} for p in pkgs]
+            
+            # Get top-level (non-dependency) packages
+            try:
+                top_result = subprocess.run(
+                    [_sys.executable, "-m", "pip", "list", "--not-required", "--format=json"],
+                    capture_output=True, text=True, timeout=15
+                )
+                if top_result.returncode == 0:
+                    root_pkgs = _json.loads(top_result.stdout)
+                    root_packages = [{"name": p["name"], "version": p["version"]} for p in root_pkgs]
+            except Exception:
+                root_packages = all_packages
+        
+        return {
+            "status": "ACTIVE",
+            "python": python_version,
+            "packages": root_packages,
+            "root_packages": root_packages,
+            "all_packages": all_packages,
+            "venv_active": hasattr(_sys, 'real_prefix') or (_sys.base_prefix != _sys.prefix)
+        }
+    except Exception as e:
+        logger.error(f"Environment fetch error: {e}")
+        return {"status": "ERROR", "error": str(e), "packages": [], "all_packages": []}
+
+@app.post("/api/v1/laboratory/inspect")
+async def inspect_lab_code(data: Dict[str, str]):
+    """Analyze code for imports and hyperparameters."""
+    code = data.get("code", "")
+    try:
+        import ast
+        tree = ast.parse(code)
+        
+        imports = set()
+        params = []
+        
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    imports.add(alias.name.split('.')[0])
+            elif isinstance(node, ast.ImportFrom):
+                if node.module:
+                    imports.add(node.module.split('.')[0])
+            elif isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and isinstance(node.value, (ast.Constant, ast.Num)):
+                        name = target.id.lower()
+                        if any(kw in name for kw in ['epoch', 'lr', 'learning_rate', 'batch', 'dropout', 'momentum']):
+                            val = node.value.value if isinstance(node.value, ast.Constant) else node.value.n
+                            params.append({"name": target.id, "value": val, "lineno": node.lineno})
+        
+        return {
+            "success": True,
+            "dependencies": sorted(imports),
+            "parameters": params
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e), "dependencies": [], "parameters": []}
+
 # ── Distributed Federated Learning REST Endpoints ──
 # These endpoints allow remote clients on ANY network to participate
 # in federated training through the existing HuggingFace Space URL.
@@ -584,6 +700,38 @@ async def get_distributed_connection_info():
         "registered_clients": len(coord.registered_clients),
         "command": f'python run_client.py --server https://rishuuuuuu-cybronites-secure-fl.hf.space --name "My-Device"',
     }
+
+# ── Secure Training Platform Proxy (for production single-port) ──
+STP_PORT = int(os.environ.get("STP_API_PORT", "8100"))
+
+@app.api_route("/api/secure/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def proxy_stp(path: str):
+    """Proxy requests to the Secure Training Platform (port 8100) in production."""
+    from starlette.requests import Request
+    from starlette.responses import JSONResponse
+    try:
+        target_url = f"http://127.0.0.1:{STP_PORT}/{path}"
+        req_body = None
+        try:
+            from fastapi import Request as FR
+            # Try to read body for POST/PUT
+            pass
+        except Exception:
+            pass
+        
+        # Use urllib for simplicity (no extra dependency)
+        import urllib.request
+        import urllib.error
+        req = urllib.request.Request(target_url)
+        req.add_header("Content-Type", "application/json")
+        
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode())
+            return JSONResponse(data)
+    except urllib.error.URLError:
+        return JSONResponse({"error": "Secure Training Platform is offline"}, status_code=503)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 # ── Static Dashboard Serving (for Deployment) ──
 # Look for 'static' (Hugging Face) or 'dist' (Local build)

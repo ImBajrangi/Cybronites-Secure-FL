@@ -25,7 +25,22 @@ def signal_handler(sig, frame):
             p.terminate()
         except Exception:
             pass
-    sys.exit(0)
+    # Wait briefly for processes to terminate
+    for p in processes:
+        try:
+            p.wait(timeout=3)
+        except Exception:
+            try:
+                p.kill()
+            except Exception:
+                pass
+    # Flush and force-exit to avoid daemon thread stdout lock crash
+    try:
+        sys.stdout.flush()
+        sys.stderr.flush()
+    except Exception:
+        pass
+    os._exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -129,10 +144,40 @@ def main():
         threading.Thread(target=stream_client_logs, args=(client_proc, i, log_file), daemon=True).start()
         time.sleep(2) # Increased delay to avoid race on server binding
 
+    # 4. Launch Secure Training Platform (Privacy Vault backend)
+    STP_PORT = int(os.environ.get("STP_API_PORT", 8100))
+    stp_main = os.path.join(cwd, "secure_training_platform", "main.py")
+    if os.path.exists(stp_main):
+        print(f"  [3/4] Starting Secure Training Platform (:{STP_PORT})...")
+        stp_proc = subprocess.Popen(
+            [python_path, stp_main],
+            env={**env, "STP_API_PORT": str(STP_PORT)},
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        processes.append(stp_proc)
+
+        def stream_stp_logs(proc, file):
+            for line in iter(proc.stdout.readline, ""):
+                print(f"  [STP] {line.strip()}")
+                file.write(f"  [STP] {line.strip()}\n")
+                file.flush()
+
+        threading.Thread(target=stream_stp_logs, args=(stp_proc, log_file), daemon=True).start()
+        time.sleep(2)
+    else:
+        STP_PORT = None
+        print("  [SKIP] Secure Training Platform not found. Privacy Vault will run in limited mode.")
+
     print(f"\n{'=' * 60}")
     print(f"  ALL SYSTEMS ONLINE")
     print(f"  Bridge:    http://localhost:{BRIDGE_PORT}")
     print(f"  WebSocket: ws://localhost:{BRIDGE_PORT}/ws")
+    if STP_PORT:
+        print(f"  STP Vault: http://localhost:{STP_PORT}/docs")
     print(f"  Dashboard: Open http://localhost:5173 (or 5174)")
     print(f"  Logs:      tail -f backend.log")
     print(f"{'=' * 60}")

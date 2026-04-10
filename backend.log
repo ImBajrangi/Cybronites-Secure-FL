@@ -1,7 +1,3 @@
-  [CLIENT 1] INFO:GuardianClient:Starting Guardian Client 1...
-  [CLIENT 0] INFO:GuardianClient:Starting Guardian Client 0...
-  [CLIENT 0] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...
-  [CLIENT 1] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...
 /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/server/bridge.py:253: DeprecationWarning: 
         on_event is deprecated, use lifespan event handlers instead.
 
@@ -16,158 +12,18 @@
         [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
         
   return self.router.on_event(event_type)
-01:04:48 [INFO] GuardianServer: Initializing Orchestrator (Rounds: 5)...
-01:04:48 [INFO] GuardianBridge: Launching Guardian Bridge on port 7880...
+01:43:19 [INFO] GuardianServer: Initializing Orchestrator (Rounds: 5)...
+01:43:19 [INFO] GuardianBridge: Launching Guardian Bridge on port 7880...
 /Users/sakhi/Code/FederatedLearningSystem-Ready/venv_root/lib/python3.9/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
   warnings.warn(  # deprecated in 14.0 - 2024-11-09
 /Users/sakhi/Code/FederatedLearningSystem-Ready/venv_root/lib/python3.9/site-packages/uvicorn/protocols/websockets/websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated
   from websockets.server import WebSocketServerProtocol
-01:04:48 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Public IP: 104.28.155.91
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Public IP: 104.28.155.91
-  [CLIENT 0] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 0] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 0] flwr.client.start_client(
-  [CLIENT 0] server_address='<IP>:<PORT>',
-  [CLIENT 0] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
-  [CLIENT 0] )
-  [CLIENT 0] Using `start_numpy_client()` is deprecated.
-  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 1] flwr.client.start_client(
-  [CLIENT 1] server_address='<IP>:<PORT>',
-  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
-  [CLIENT 1] )
-  [CLIENT 1] Using `start_numpy_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 1] 
-  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 1] flwr.client.start_client(
-  [CLIENT 1] server_address='<IP>:<PORT>',
-  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
-  [CLIENT 1] )
-  [CLIENT 1] Using `start_numpy_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 1] 
-  [CLIENT 0] 
-  [CLIENT 0] This is a deprecated feature. It will be removed
-  [CLIENT 0] entirely in future versions of Flower.
-  [CLIENT 0] 
-  [CLIENT 0] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 0] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 0] flwr.client.start_client(
-  [CLIENT 0] server_address='<IP>:<PORT>',
-  [CLIENT 0] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
-  [CLIENT 0] )
-  [CLIENT 0] Using `start_numpy_client()` is deprecated.
-  [CLIENT 0] 
-  [CLIENT 0] This is a deprecated feature. It will be removed
-  [CLIENT 0] entirely in future versions of Flower.
-  [CLIENT 0] 
-  [CLIENT 0] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
-  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
-  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 1] 
-  [CLIENT 1] To view all available options, run:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --help
-  [CLIENT 1] 
-  [CLIENT 1] Using `start_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 0] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 0] 
-  [CLIENT 0] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 0] 
-  [CLIENT 1] 
-  [CLIENT 0] To view all available options, run:
-  [CLIENT 0] 
-  [CLIENT 0] $ flower-supernode --help
-  [CLIENT 0] 
-  [CLIENT 0] Using `start_client()` is deprecated.
-  [CLIENT 0] 
-  [CLIENT 0] This is a deprecated feature. It will be removed
-  [CLIENT 0] entirely in future versions of Flower.
-  [CLIENT 0] 
-  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
-  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 1] 
-  [CLIENT 1] To view all available options, run:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --help
-  [CLIENT 1] 
-  [CLIENT 0] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
-  [CLIENT 0] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 0] 
-  [CLIENT 0] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 0] 
-  [CLIENT 0] To view all available options, run:
-  [CLIENT 0] 
-  [CLIENT 0] $ flower-supernode --help
-  [CLIENT 1] Using `start_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 1] 
-  [CLIENT 0] 
-  [CLIENT 0] Using `start_client()` is deprecated.
-  [CLIENT 0] 
-  [CLIENT 0] This is a deprecated feature. It will be removed
-  [CLIENT 0] entirely in future versions of Flower.
-  [CLIENT 0] 
-  [CLIENT 1] DEBUG:flwr:Opened insecure gRPC connection (no certificates were passed)
-  [CLIENT 0] DEBUG:flwr:Opened insecure gRPC connection (no certificates were passed)
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.IDLE
-  [CLIENT 0] DEBUG:flwr:ChannelConnectivity.IDLE
-  [CLIENT 0] DEBUG:flwr:ChannelConnectivity.CONNECTING
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.CONNECTING
-  [CLIENT 0] DEBUG:flwr:ChannelConnectivity.TRANSIENT_FAILURE
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.TRANSIENT_FAILURE
-  [CLIENT 1] I0411 01:04:48.623862   95062 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 1] I0411 01:04:48.658801   95062 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 0] I0411 01:04:48.691398   95063 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 0] I0411 01:04:48.713872   95063 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 0] DEBUG:flwr:gRPC channel closed
-  [CLIENT 1] DEBUG:flwr:gRPC channel closed
-  [CLIENT 0] WARNING:GuardianClient:Connection failed: <_MultiThreadedRendezvous of RPC that terminated with:
-  [CLIENT 0] status = StatusCode.UNAVAILABLE
-  [CLIENT 1] WARNING:GuardianClient:Connection failed: <_MultiThreadedRendezvous of RPC that terminated with:
-  [CLIENT 0] details = "failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:8095: Failed to connect to remote host: Connection refused"
-  [CLIENT 1] status = StatusCode.UNAVAILABLE
-  [CLIENT 0] debug_error_string = "UNKNOWN:Error received from peer  {grpc_message:"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:8095: Failed to connect to remote host: Connection refused", grpc_status:14}"
-  [CLIENT 1] details = "failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:8095: Failed to connect to remote host: Connection refused"
-  [CLIENT 1] debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:8095: Failed to connect to remote host: Connection refused"}"
-  [CLIENT 1] >
-  [CLIENT 0] >
-01:04:48 [INFO] GuardianBridge: Public IP fetched: 104.28.155.91
-01:04:48 [INFO] GuardianBridge: Distributed Coordinator initialized and linked to bridge.
-01:04:48 [INFO] GuardianBridge: IPC Log Listener thread started.
-01:04:48 [INFO] GuardianBridge: Guardian Bridge Event Loop context captured.
-/Users/sakhi/Code/FederatedLearningSystem-Ready/venv_root/lib/python3.9/site-packages/websockets/legacy/server.py:1178: DeprecationWarning: remove second argument of ws_handler
-  warnings.warn("remove second argument of ws_handler", DeprecationWarning)
-01:04:49 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
-01:04:49 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
-01:04:49 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 1
-01:04:49 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
-01:04:49 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
-01:04:49 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 2
-01:04:49 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
-01:04:49 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
-01:04:49 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 3
-01:04:49 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
-01:04:49 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
-01:04:49 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 4
-01:04:50 [INFO] GuardianServer: Launching Flower Server on port 8095...
+01:43:19 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+01:43:19 [INFO] GuardianBridge: Public IP fetched: 104.28.155.91
+01:43:19 [INFO] GuardianBridge: Distributed Coordinator initialized and linked to bridge.
+01:43:20 [INFO] GuardianBridge: IPC Log Listener thread started.
+01:43:20 [INFO] GuardianBridge: Guardian Bridge Event Loop context captured.
+01:43:21 [INFO] GuardianServer: Launching Flower Server on port 8095...
 [93mWARNING [0m:   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
 	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
 
@@ -182,7 +38,7 @@
             This is a deprecated feature. It will be removed
             entirely in future versions of Flower.
         
-01:04:50 [WARNING] flwr: DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+01:43:21 [WARNING] flwr: DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
 	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
 
 		$ flower-superlink --insecure
@@ -197,91 +53,52 @@
             entirely in future versions of Flower.
         
 [92mINFO [0m:      Starting Flower server, config: num_rounds=5, no round_timeout
-01:04:50 [INFO] flwr: Starting Flower server, config: num_rounds=5, no round_timeout
+01:43:21 [INFO] flwr: Starting Flower server, config: num_rounds=5, no round_timeout
 [92mINFO [0m:      Flower ECE: gRPC server running (5 rounds), SSL is disabled
-01:04:50 [INFO] flwr: Flower ECE: gRPC server running (5 rounds), SSL is disabled
+01:43:21 [INFO] flwr: Flower ECE: gRPC server running (5 rounds), SSL is disabled
 [92mINFO [0m:      [INIT]
-01:04:50 [INFO] flwr: [INIT]
+01:43:21 [INFO] flwr: [INIT]
 [92mINFO [0m:      Requesting initial parameters from one random client
-01:04:50 [INFO] flwr: Requesting initial parameters from one random client
-I0411 01:04:50.364768   95260 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-I0411 01:04:50.385025   95260 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 0] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 2)...
-  [CLIENT 1] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 2)...
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Public IP: 104.28.155.91
+01:43:21 [INFO] flwr: Requesting initial parameters from one random client
+I0411 01:43:21.456623  130309 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/sakhi/Code/FederatedLearningSystem-Ready/venv_root/lib/python3.9/site-packages/websockets/legacy/server.py:1178: DeprecationWarning: remove second argument of ws_handler
+  warnings.warn("remove second argument of ws_handler", DeprecationWarning)
+01:43:21 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+01:43:21 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+01:43:21 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 1
+01:43:21 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+01:43:21 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+01:43:21 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 2
+01:43:21 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+01:43:21 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+01:43:21 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 3
+01:43:23 [INFO] GuardianBridge: Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py
+01:43:23 [INFO] GuardianBridge: Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db
+01:43:23 [INFO] GuardianBridge: Dashboard connected. Total subscribers: 4
+  [CLIENT 0] INFO:GuardianClient:Starting Guardian Client 0...
+  [CLIENT 0] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...
   [CLIENT 0] INFO:GuardianClient:Client 0 | Public IP: 104.28.155.91
-  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
   [CLIENT 0] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
   [CLIENT 0] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 1] flwr.client.start_client(
-  [CLIENT 1] server_address='<IP>:<PORT>',
   [CLIENT 0] flwr.client.start_client(
   [CLIENT 0] server_address='<IP>:<PORT>',
-  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
   [CLIENT 0] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
-  [CLIENT 1] )
-  [CLIENT 1] Using `start_numpy_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
   [CLIENT 0] )
-  [CLIENT 1] 
-  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 1] flwr.client.start_client(
   [CLIENT 0] Using `start_numpy_client()` is deprecated.
   [CLIENT 0] 
-  [CLIENT 1] server_address='<IP>:<PORT>',
   [CLIENT 0] This is a deprecated feature. It will be removed
   [CLIENT 0] entirely in future versions of Flower.
   [CLIENT 0] 
-  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
   [CLIENT 0] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
-  [CLIENT 1] )
-  [CLIENT 1] Using `start_numpy_client()` is deprecated.
-  [CLIENT 1] 
   [CLIENT 0] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
-  [CLIENT 1] This is a deprecated feature. It will be removed
   [CLIENT 0] flwr.client.start_client(
-  [CLIENT 1] entirely in future versions of Flower.
   [CLIENT 0] server_address='<IP>:<PORT>',
-  [CLIENT 1] 
   [CLIENT 0] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
   [CLIENT 0] )
   [CLIENT 0] Using `start_numpy_client()` is deprecated.
   [CLIENT 0] 
-  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
   [CLIENT 0] This is a deprecated feature. It will be removed
-  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 1] 
-  [CLIENT 1] To view all available options, run:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --help
-  [CLIENT 1] 
-  [CLIENT 1] Using `start_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 1] 
-  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
-  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
-  [CLIENT 1] 
   [CLIENT 0] entirely in future versions of Flower.
-  [CLIENT 1] To view all available options, run:
-  [CLIENT 1] 
-  [CLIENT 1] $ flower-supernode --help
-  [CLIENT 1] 
-  [CLIENT 1] Using `start_client()` is deprecated.
-  [CLIENT 1] 
-  [CLIENT 1] This is a deprecated feature. It will be removed
-  [CLIENT 1] entirely in future versions of Flower.
-  [CLIENT 1] 
-  [CLIENT 1] DEBUG:flwr:Opened insecure gRPC connection (no certificates were passed)
   [CLIENT 0] 
   [CLIENT 0] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
   [CLIENT 0] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
@@ -313,179 +130,257 @@ I0411 01:04:50.385025   95260 fork_posix.cc:71] Other threads are currently call
   [CLIENT 0] 
   [CLIENT 0] DEBUG:flwr:Opened insecure gRPC connection (no certificates were passed)
   [CLIENT 0] DEBUG:flwr:ChannelConnectivity.IDLE
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.IDLE
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.CONNECTING
-  [CLIENT 1] I0411 01:04:54.206749   95062 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
-  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.READY
-  [CLIENT 1] [92mINFO [0m:
-  [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: get_parameters message e4985a98-dbc0-45d3-b001-69708ba14cb2
-  [CLIENT 1] INFO:flwr:Received: get_parameters message e4985a98-dbc0-45d3-b001-69708ba14cb2
-  [CLIENT 1] [92mINFO [0m:      Sent reply
-  [CLIENT 1] INFO:flwr:Sent reply
-[92mINFO [0m:      Received initial parameters from one random client
-01:04:54 [INFO] flwr: Received initial parameters from one random client
-[92mINFO [0m:      Starting evaluation of initial global parameters
-01:04:54 [INFO] flwr: Starting evaluation of initial global parameters
-[92mINFO [0m:      Evaluation returned no results (`None`)
-01:04:54 [INFO] flwr: Evaluation returned no results (`None`)
-[92mINFO [0m:      
-01:04:54 [INFO] flwr: 
-[92mINFO [0m:      [ROUND 1]
-01:04:54 [INFO] flwr: [ROUND 1]
-  [CLIENT 0] I0411 01:05:56.783625   95063 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
   [CLIENT 0] DEBUG:flwr:ChannelConnectivity.CONNECTING
   [CLIENT 0] DEBUG:flwr:ChannelConnectivity.READY
-[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-01:05:56 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
-  [CLIENT 1] [92mINFO [0m:
-  [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: train message 64bab7bc-55bc-4a4a-8cf6-6184b754c991
-  [CLIENT 1] INFO:flwr:Received: train message 64bab7bc-55bc-4a4a-8cf6-6184b754c991
+  [CLIENT 0] I0411 01:43:24.352990  130470 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: train message 826fc75e-0566-461c-b4a2-7a6f27516ba9
-  [CLIENT 0] INFO:flwr:Received: train message 826fc75e-0566-461c-b4a2-7a6f27516ba9
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] [92mINFO [0m:      Received: get_parameters message 91ab5844-af75-4023-95f6-49deda119723
+  [CLIENT 0] INFO:flwr:Received: get_parameters message 91ab5844-af75-4023-95f6-49deda119723
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      Received initial parameters from one random client
+01:43:24 [INFO] flwr: Received initial parameters from one random client
+[92mINFO [0m:      Starting evaluation of initial global parameters
+01:43:24 [INFO] flwr: Starting evaluation of initial global parameters
+[92mINFO [0m:      Evaluation returned no results (`None`)
+01:43:24 [INFO] flwr: Evaluation returned no results (`None`)
+[92mINFO [0m:      
+01:43:24 [INFO] flwr: 
+[92mINFO [0m:      [ROUND 1]
+01:43:24 [INFO] flwr: [ROUND 1]
+  [CLIENT 0] I0411 01:43:24.436879  130470 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+  [CLIENT 1] INFO:GuardianClient:Starting Guardian Client 1...
+  [CLIENT 1] INFO:GuardianClient:Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ WARNING │ Using development master key — NOT FOR PRODUCTION
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ INFO    │ Key Manager initialized
+  [STP] 01:43:26 │ secure_training_platform.training_worker.worker │ WARNING │ Redis unavailable (No module named 'redis'), using in-process queue
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ WARNING │ Using development master key — NOT FOR PRODUCTION
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ INFO    │ Key Manager initialized
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ WARNING │ Using development master key — NOT FOR PRODUCTION
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ INFO    │ Key Manager initialized
+  [STP] 01:43:26 │ secure_training_platform.training_worker.worker │ WARNING │ Redis unavailable (No module named 'redis'), using in-process queue
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ WARNING │ Using development master key — NOT FOR PRODUCTION
+  [STP] 01:43:26 │ secure_training_platform.key_manager.manager │ INFO    │ Key Manager initialized
+  [STP] INFO:     Started server process [10329]
+  [STP] INFO:     Waiting for application startup.
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │ ════════════════════════════════════════════════════════════
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │   Secure AI Training Platform — Starting
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │ ════════════════════════════════════════════════════════════
+  [STP] 01:43:26 │ secure_training_platform.database.db │ INFO    │ Database initialized at /Users/sakhi/Code/FederatedLearningSystem-Ready/secure_training_platform/database/secure_platform.db
+  [STP] 01:43:26 │ secure_training_platform.training_worker.worker │ INFO    │ Training worker started
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │ API server ready on http://0.0.0.0:8100
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │ Training worker active — listening for jobs
+  [STP] 01:43:26 │ secure_training_platform.main  │ INFO    │ ════════════════════════════════════════════════════════════
+  [STP] INFO:     Application startup complete.
+  [STP] INFO:     Uvicorn running on http://0.0.0.0:8100 (Press CTRL+C to quit)
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Public IP: 104.28.155.91
+  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
+  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
+  [CLIENT 1] flwr.client.start_client(
+  [CLIENT 1] server_address='<IP>:<PORT>',
+  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+  [CLIENT 1] )
+  [CLIENT 1] Using `start_numpy_client()` is deprecated.
+  [CLIENT 1] 
+  [CLIENT 1] This is a deprecated feature. It will be removed
+  [CLIENT 1] entirely in future versions of Flower.
+  [CLIENT 1] 
+  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
+  [CLIENT 1] Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
+  [CLIENT 1] flwr.client.start_client(
+  [CLIENT 1] server_address='<IP>:<PORT>',
+  [CLIENT 1] client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+  [CLIENT 1] )
+  [CLIENT 1] Using `start_numpy_client()` is deprecated.
+  [CLIENT 1] 
+  [CLIENT 1] This is a deprecated feature. It will be removed
+  [CLIENT 1] entirely in future versions of Flower.
+  [CLIENT 1] 
+  [CLIENT 1] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+  [CLIENT 1] 
+  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+  [CLIENT 1] 
+  [CLIENT 1] To view all available options, run:
+  [CLIENT 1] 
+  [CLIENT 1] $ flower-supernode --help
+  [CLIENT 1] 
+  [CLIENT 1] Using `start_client()` is deprecated.
+  [CLIENT 1] 
+  [CLIENT 1] This is a deprecated feature. It will be removed
+  [CLIENT 1] entirely in future versions of Flower.
+  [CLIENT 1] 
+  [CLIENT 1] WARNING:flwr:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+  [CLIENT 1] Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+  [CLIENT 1] 
+  [CLIENT 1] $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+  [CLIENT 1] 
+  [CLIENT 1] To view all available options, run:
+  [CLIENT 1] 
+  [CLIENT 1] $ flower-supernode --help
+  [CLIENT 1] 
+  [CLIENT 1] Using `start_client()` is deprecated.
+  [CLIENT 1] 
+  [CLIENT 1] This is a deprecated feature. It will be removed
+  [CLIENT 1] entirely in future versions of Flower.
+  [CLIENT 1] 
+  [CLIENT 1] DEBUG:flwr:Opened insecure gRPC connection (no certificates were passed)
+  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.IDLE
+  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.CONNECTING
+  [CLIENT 1] DEBUG:flwr:ChannelConnectivity.READY
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+01:43:26 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+  [CLIENT 1] I0411 01:43:26.548258  130594 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message 3acfe716-1944-4397-8ebd-e71453e068bd
+  [CLIENT 0] INFO:flwr:Received: train message 3acfe716-1944-4397-8ebd-e71453e068bd
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: train message 675bbfa9-2fe9-4486-a3b9-9ef5cd1957e4
+  [CLIENT 1] INFO:flwr:Received: train message 675bbfa9-2fe9-4486-a3b9-9ef5cd1957e4
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 1] I0411 01:43:26.562742  130594 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
   [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
-  [CLIENT 1] [92mINFO [0m:      Sent reply
-  [CLIENT 1] INFO:flwr:Sent reply
   [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
   [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-01:06:43 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
-01:06:43 [INFO] GuardianBridge: Node aab380ee9c5c4c1b916a9a6e062b7b9a persisted to database with IP 104.28.155.91.
-01:06:43 [INFO] GuardianBridge: Node cd0baf15c42a44e681ba78ddf56ee0c5 persisted to database with IP 104.28.155.91.
-01:06:43 [INFO] SecureStrategy: Round 1 Synced (Acc: 79.75%)
-01:06:43 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 1
+01:43:35 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+01:43:35 [INFO] GuardianBridge: Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.
+01:43:35 [INFO] GuardianBridge: Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.
+01:43:35 [INFO] SecureStrategy: Round 1 Synced (Acc: 79.54%)
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-01:06:43 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
-  [CLIENT 0] [92mINFO [0m:
-  [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 01126eb4-155f-4738-bf90-9b42184fa779
-  [CLIENT 0] INFO:flwr:Received: evaluate message 01126eb4-155f-4738-bf90-9b42184fa779
+01:43:35 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 1
+01:43:35 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
   [CLIENT 1] [92mINFO [0m:
   [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 9fdd1fed-7c0e-4d24-9271-934a70b3497c
-  [CLIENT 1] INFO:flwr:Received: evaluate message 9fdd1fed-7c0e-4d24-9271-934a70b3497c
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.3816
-  [CLIENT 0] [92mINFO [0m:      Sent reply
-  [CLIENT 0] INFO:flwr:Sent reply
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.3816
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 5e5ac342-b1e3-4df2-836e-371b44acdf62
+  [CLIENT 1] INFO:flwr:Received: evaluate message 5e5ac342-b1e3-4df2-836e-371b44acdf62
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message b646315a-91fd-481e-b3ea-ba64cfccf6a1
+  [CLIENT 0] INFO:flwr:Received: evaluate message b646315a-91fd-481e-b3ea-ba64cfccf6a1
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.3094
   [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.3094
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-01:06:48 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+01:43:37 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
 [93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
-01:06:48 [WARNING] flwr: No evaluate_metrics_aggregation_fn provided
+01:43:37 [WARNING] flwr: No evaluate_metrics_aggregation_fn provided
 [92mINFO [0m:      
-01:06:48 [INFO] flwr: 
+01:43:37 [INFO] flwr: 
 [92mINFO [0m:      [ROUND 2]
-01:06:48 [INFO] flwr: [ROUND 2]
+01:43:37 [INFO] flwr: [ROUND 2]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-01:06:48 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+01:43:37 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: train message f93f2348-355f-4083-ada5-a071cb07a9bd
-  [CLIENT 0] INFO:flwr:Received: train message f93f2348-355f-4083-ada5-a071cb07a9bd
+  [CLIENT 0] [92mINFO [0m:      Received: train message 94609516-61ff-45aa-9e2c-8ad5aa4c046f
+  [CLIENT 0] INFO:flwr:Received: train message 94609516-61ff-45aa-9e2c-8ad5aa4c046f
   [CLIENT 1] [92mINFO [0m:
   [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: train message c2568cac-9a5c-4924-b0fb-0dc9f051f6a0
-  [CLIENT 1] INFO:flwr:Received: train message c2568cac-9a5c-4924-b0fb-0dc9f051f6a0
+  [CLIENT 1] [92mINFO [0m:      Received: train message ef8d020f-b24e-4584-9b25-0473a21b64cf
+  [CLIENT 1] INFO:flwr:Received: train message ef8d020f-b24e-4584-9b25-0473a21b64cf
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
   [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
   [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
-  [CLIENT 0] [92mINFO [0m:      Sent reply
-  [CLIENT 0] INFO:flwr:Sent reply
   [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
   [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 1] INFO:flwr:Sent reply
-[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-01:07:25 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
-01:07:25 [INFO] GuardianBridge: Node aab380ee9c5c4c1b916a9a6e062b7b9a persisted to database with IP 104.28.155.91.
-01:07:25 [INFO] GuardianBridge: Node cd0baf15c42a44e681ba78ddf56ee0c5 persisted to database with IP 104.28.155.91.
-01:07:25 [INFO] SecureStrategy: Round 2 Synced (Acc: 84.40%)
-[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-01:07:25 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
-01:07:25 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 2
-  [CLIENT 1] [92mINFO [0m:
-  [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 682b7563-136c-4818-8a0c-e525268ee434
-  [CLIENT 1] INFO:flwr:Received: evaluate message 682b7563-136c-4818-8a0c-e525268ee434
-  [CLIENT 0] [92mINFO [0m:
-  [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 51533827-5be9-4bdd-920f-788b819c9640
-  [CLIENT 0] INFO:flwr:Received: evaluate message 51533827-5be9-4bdd-920f-788b819c9640
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.7289
   [CLIENT 0] [92mINFO [0m:      Sent reply
   [CLIENT 0] INFO:flwr:Sent reply
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.7289
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+01:43:46 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+01:43:46 [INFO] GuardianBridge: Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.
+01:43:46 [INFO] GuardianBridge: Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.
+01:43:46 [INFO] SecureStrategy: Round 2 Synced (Acc: 83.93%)
+01:43:46 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 2
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+01:43:46 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 6163f0a3-3daf-4dfe-b9a6-b54cb23fc0b8
+  [CLIENT 0] INFO:flwr:Received: evaluate message 6163f0a3-3daf-4dfe-b9a6-b54cb23fc0b8
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 95df917a-6863-4d02-9e91-8ddd29152890
+  [CLIENT 1] INFO:flwr:Received: evaluate message 95df917a-6863-4d02-9e91-8ddd29152890
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.5578
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.5578
   [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 1] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-01:07:32 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+01:43:48 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-01:07:32 [INFO] flwr: 
+01:43:48 [INFO] flwr: 
 [92mINFO [0m:      [ROUND 3]
-01:07:32 [INFO] flwr: [ROUND 3]
+01:43:48 [INFO] flwr: [ROUND 3]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-01:07:32 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+01:43:48 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
   [CLIENT 1] [92mINFO [0m:
   [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: train message f3d8ca56-c09a-46dd-847d-45b7f622b687
-  [CLIENT 1] INFO:flwr:Received: train message f3d8ca56-c09a-46dd-847d-45b7f622b687
+  [CLIENT 1] [92mINFO [0m:      Received: train message 2a262025-3310-4891-8172-8fadd2f4c518
+  [CLIENT 1] INFO:flwr:Received: train message 2a262025-3310-4891-8172-8fadd2f4c518
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: train message 7e996207-ee30-4056-b281-88127aea5113
-  [CLIENT 0] INFO:flwr:Received: train message 7e996207-ee30-4056-b281-88127aea5113
+  [CLIENT 0] [92mINFO [0m:      Received: train message 6645ca03-f7f2-425f-bcee-6afc76a38088
+  [CLIENT 0] INFO:flwr:Received: train message 6645ca03-f7f2-425f-bcee-6afc76a38088
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
-  [CLIENT 1] [92mINFO [0m:      Sent reply
-  [CLIENT 1] INFO:flwr:Sent reply
   [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
   [CLIENT 0] [92mINFO [0m:      Sent reply
   [CLIENT 0] INFO:flwr:Sent reply
-[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-01:08:18 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
-01:08:18 [INFO] GuardianBridge: Node cd0baf15c42a44e681ba78ddf56ee0c5 persisted to database with IP 104.28.155.91.
-01:08:18 [INFO] GuardianBridge: Node aab380ee9c5c4c1b916a9a6e062b7b9a persisted to database with IP 104.28.155.91.
-01:08:18 [INFO] SecureStrategy: Round 3 Synced (Acc: 87.01%)
-[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-01:08:18 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 3
-01:08:18 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
-  [CLIENT 0] [92mINFO [0m:
-  [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: evaluate message cf85b2ff-79ef-4214-886f-de2c44e15167
-  [CLIENT 0] INFO:flwr:Received: evaluate message cf85b2ff-79ef-4214-886f-de2c44e15167
-  [CLIENT 1] [92mINFO [0m:
-  [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: evaluate message b1056a3b-5786-4355-b741-ac7f39509202
-  [CLIENT 1] INFO:flwr:Received: evaluate message b1056a3b-5786-4355-b741-ac7f39509202
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.8610
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
   [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 1] INFO:flwr:Sent reply
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.8610
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+01:43:59 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+01:43:59 [INFO] GuardianBridge: Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.
+01:43:59 [INFO] GuardianBridge: Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.
+01:43:59 [INFO] SecureStrategy: Round 3 Synced (Acc: 86.62%)
+01:43:59 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 3
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+01:43:59 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 90886370-536d-47b9-b58c-43565c8ab1a9
+  [CLIENT 1] INFO:flwr:Received: evaluate message 90886370-536d-47b9-b58c-43565c8ab1a9
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 2571ede2-a902-4e5e-a7fc-ae76d84287ed
+  [CLIENT 0] INFO:flwr:Received: evaluate message 2571ede2-a902-4e5e-a7fc-ae76d84287ed
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.7947
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.7947
   [CLIENT 0] [92mINFO [0m:      Sent reply
   [CLIENT 0] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-01:08:23 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+01:44:01 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-01:08:23 [INFO] flwr: 
+01:44:01 [INFO] flwr: 
 [92mINFO [0m:      [ROUND 4]
-01:08:23 [INFO] flwr: [ROUND 4]
+01:44:01 [INFO] flwr: [ROUND 4]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-01:08:23 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
-  [CLIENT 1] [92mINFO [0m:
-  [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: train message 288755b1-e321-46d3-b2c2-e077bd00b8d5
-  [CLIENT 1] INFO:flwr:Received: train message 288755b1-e321-46d3-b2c2-e077bd00b8d5
+01:44:01 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: train message 8a41fdb7-77ba-4ca9-9680-0ed636bf9f04
-  [CLIENT 0] INFO:flwr:Received: train message 8a41fdb7-77ba-4ca9-9680-0ed636bf9f04
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: train message ef29e331-464c-4352-81c9-2e5d14b608dc
+  [CLIENT 0] INFO:flwr:Received: train message ef29e331-464c-4352-81c9-2e5d14b608dc
+  [CLIENT 1] [92mINFO [0m:      Received: train message 894babae-8861-4fcc-ab1a-6ba951b7e360
+  [CLIENT 1] INFO:flwr:Received: train message 894babae-8861-4fcc-ab1a-6ba951b7e360
   [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
   [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
   [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
@@ -495,42 +390,129 @@ I0411 01:04:50.385025   95260 fork_posix.cc:71] Other threads are currently call
   [CLIENT 1] [92mINFO [0m:      Sent reply
   [CLIENT 1] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-01:09:00 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
-01:09:00 [INFO] GuardianBridge: Node cd0baf15c42a44e681ba78ddf56ee0c5 persisted to database with IP 104.28.155.91.
-01:09:00 [INFO] GuardianBridge: Node aab380ee9c5c4c1b916a9a6e062b7b9a persisted to database with IP 104.28.155.91.
-01:09:00 [INFO] SecureStrategy: Round 4 Synced (Acc: 88.26%)
+01:44:11 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+01:44:11 [INFO] GuardianBridge: Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.
+01:44:11 [INFO] GuardianBridge: Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.
+01:44:11 [INFO] SecureStrategy: Round 4 Synced (Acc: 88.13%)
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-01:09:00 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
-01:09:00 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 4
+01:44:11 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+01:44:11 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 4
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 06c022fb-e4fd-4187-98e8-851a98e01b85
-  [CLIENT 0] INFO:flwr:Received: evaluate message 06c022fb-e4fd-4187-98e8-851a98e01b85
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 9557821f-1719-45f8-98a4-4f92af7732c9
+  [CLIENT 0] INFO:flwr:Received: evaluate message 9557821f-1719-45f8-98a4-4f92af7732c9
   [CLIENT 1] [92mINFO [0m:
   [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 56955383-0d4c-4874-aa66-f1273d35a3a9
-  [CLIENT 1] INFO:flwr:Received: evaluate message 56955383-0d4c-4874-aa66-f1273d35a3a9
-  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.9507
-  [CLIENT 1] [92mINFO [0m:      Sent reply
-  [CLIENT 1] INFO:flwr:Sent reply
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.9507
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 86d1c02b-24a4-4926-b9f7-f2fc5427c3af
+  [CLIENT 1] INFO:flwr:Received: evaluate message 86d1c02b-24a4-4926-b9f7-f2fc5427c3af
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.9098
   [CLIENT 0] [92mINFO [0m:      Sent reply
   [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.9098
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-01:09:07 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+01:44:13 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-01:09:07 [INFO] flwr: 
+01:44:13 [INFO] flwr: 
 [92mINFO [0m:      [ROUND 5]
-01:09:07 [INFO] flwr: [ROUND 5]
+01:44:13 [INFO] flwr: [ROUND 5]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-01:09:07 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
+01:44:13 [INFO] flwr: configure_fit: strategy sampled 2 clients (out of 2)
   [CLIENT 1] [92mINFO [0m:
   [CLIENT 1] INFO:flwr:
-  [CLIENT 1] [92mINFO [0m:      Received: train message 80fedf23-3709-4529-afab-426d256e907a
-  [CLIENT 1] INFO:flwr:Received: train message 80fedf23-3709-4529-afab-426d256e907a
+  [CLIENT 1] [92mINFO [0m:      Received: train message c9ed1b80-62ab-4ee8-bf8b-a37baa4bfb49
+  [CLIENT 1] INFO:flwr:Received: train message c9ed1b80-62ab-4ee8-bf8b-a37baa4bfb49
   [CLIENT 0] [92mINFO [0m:
   [CLIENT 0] INFO:flwr:
-  [CLIENT 0] [92mINFO [0m:      Received: train message 0e5b17d1-f6cc-4f77-9b58-1a18016eca88
-  [CLIENT 0] INFO:flwr:Received: train message 0e5b17d1-f6cc-4f77-9b58-1a18016eca88
-  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [CLIENT 0] [92mINFO [0m:      Received: train message 3c69687f-7493-4c73-be1d-ac64765138a2
+  [CLIENT 0] INFO:flwr:Received: train message 3c69687f-7493-4c73-be1d-ac64765138a2
   [CLIENT 1] INFO:GuardianClient:Client 1 | Training locally...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Training locally...
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Applying DP Noise (ε-privacy)...
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Applying DP Noise (ε-privacy)...
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+01:44:25 [INFO] flwr: aggregate_fit: received 2 results and 0 failures
+01:44:25 [INFO] GuardianBridge: Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.
+01:44:25 [INFO] GuardianBridge: Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.
+01:44:25 [INFO] SecureStrategy: Round 5 Synced (Acc: 89.29%)
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+01:44:26 [INFO] flwr: configure_evaluate: strategy sampled 2 clients (out of 2)
+01:44:26 [INFO] GuardianBridge: Broadcasting STAT_UPDATE. Accuracy History Size: 5
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: evaluate message 53816f1c-2c38-4ccf-880d-bb2b338e667e
+  [CLIENT 1] INFO:flwr:Received: evaluate message 53816f1c-2c38-4ccf-880d-bb2b338e667e
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: evaluate message 156a9b1e-61b3-440e-adb9-b5155c9b26d8
+  [CLIENT 0] INFO:flwr:Received: evaluate message 156a9b1e-61b3-440e-adb9-b5155c9b26d8
+  [CLIENT 0] INFO:GuardianClient:Client 0 | Accuracy: 0.9489
+  [CLIENT 0] [92mINFO [0m:      Sent reply
+  [CLIENT 0] INFO:flwr:Sent reply
+  [CLIENT 1] INFO:GuardianClient:Client 1 | Accuracy: 0.9489
+  [CLIENT 1] [92mINFO [0m:      Sent reply
+  [CLIENT 1] INFO:flwr:Sent reply
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+01:44:28 [INFO] flwr: aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+01:44:28 [INFO] flwr: 
+[92mINFO [0m:      [SUMMARY]
+01:44:28 [INFO] flwr: [SUMMARY]
+[92mINFO [0m:      Run finished 5 round(s) in 64.19s
+01:44:28 [INFO] flwr: Run finished 5 round(s) in 64.19s
+[92mINFO [0m:      	History (loss, distributed):
+01:44:28 [INFO] flwr: 	History (loss, distributed):
+[92mINFO [0m:      		round 1: 2.229692220687866
+01:44:28 [INFO] flwr: 		round 1: 2.229692220687866
+[92mINFO [0m:      		round 2: 2.0907626152038574
+01:44:28 [INFO] flwr: 		round 2: 2.0907626152038574
+[92mINFO [0m:      		round 3: 1.8554202318191528
+01:44:28 [INFO] flwr: 		round 3: 1.8554202318191528
+[92mINFO [0m:      		round 4: 1.5499179363250732
+01:44:28 [INFO] flwr: 		round 4: 1.5499179363250732
+[92mINFO [0m:      		round 5: 1.1975544691085815
+01:44:28 [INFO] flwr: 		round 5: 1.1975544691085815
+[92mINFO [0m:      	History (metrics, distributed, fit):
+01:44:28 [INFO] flwr: 	History (metrics, distributed, fit):
+[92mINFO [0m:      	{'accuracy': [(1, 0.7954),
+01:44:28 [INFO] flwr: 	{'accuracy': [(1, 0.7954),
+[92mINFO [0m:      	              (2, 0.8393333333333333),
+01:44:28 [INFO] flwr: 	              (2, 0.8393333333333333),
+[92mINFO [0m:      	              (3, 0.8661833333333333),
+01:44:28 [INFO] flwr: 	              (3, 0.8661833333333333),
+[92mINFO [0m:      	              (4, 0.8813333333333333),
+01:44:28 [INFO] flwr: 	              (4, 0.8813333333333333),
+[92mINFO [0m:      	              (5, 0.8929333333333334)],
+01:44:28 [INFO] flwr: 	              (5, 0.8929333333333334)],
+[92mINFO [0m:      	 'loss': [(1, 0.24528871476650238),
+01:44:28 [INFO] flwr: 	 'loss': [(1, 0.24528871476650238),
+[92mINFO [0m:      	          (2, 0.5202054083347321),
+01:44:28 [INFO] flwr: 	          (2, 0.5202054083347321),
+[92mINFO [0m:      	          (3, 0.1610560193657875),
+01:44:28 [INFO] flwr: 	          (3, 0.1610560193657875),
+[92mINFO [0m:      	          (4, 0.19768383353948593),
+01:44:28 [INFO] flwr: 	          (4, 0.19768383353948593),
+[92mINFO [0m:      	          (5, 0.3049739897251129)]}
+01:44:28 [INFO] flwr: 	          (5, 0.3049739897251129)]}
+[92mINFO [0m:      
+01:44:28 [INFO] flwr: 
+  [CLIENT 0] [92mINFO [0m:
+  [CLIENT 0] INFO:flwr:
+  [CLIENT 0] [92mINFO [0m:      Received: reconnect message 559a8e27-7363-4881-952f-5e714f0f2737
+  [CLIENT 0] INFO:flwr:Received: reconnect message 559a8e27-7363-4881-952f-5e714f0f2737
+  [CLIENT 1] [92mINFO [0m:
+  [CLIENT 1] INFO:flwr:
+  [CLIENT 1] [92mINFO [0m:      Received: reconnect message 431e69f4-5506-4f85-9b35-26ae54a5534e
+  [CLIENT 1] INFO:flwr:Received: reconnect message 431e69f4-5506-4f85-9b35-26ae54a5534e
+01:44:28 [INFO] GuardianServer: Training session complete. Maintaining dashboard bridge...
+  [CLIENT 1] DEBUG:flwr:gRPC channel closed
+  [CLIENT 0] DEBUG:flwr:gRPC channel closed
+  [CLIENT 1] [92mINFO [0m:      Disconnect and shut down
+  [CLIENT 1] INFO:flwr:Disconnect and shut down
+  [CLIENT 0] [92mINFO [0m:      Disconnect and shut down
+  [CLIENT 0] INFO:flwr:Disconnect and shut down
