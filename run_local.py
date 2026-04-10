@@ -83,6 +83,8 @@ def main():
     # Find Python interpreter
     python_path = os.path.join(cwd, "Cybronites/venv_mac/bin/python3")
     if not os.path.exists(python_path):
+        python_path = os.path.join(cwd, "venv_root/bin/python3")
+    if not os.path.exists(python_path):
         python_path = sys.executable
     print(f"  [PYTHON] {python_path}")
     

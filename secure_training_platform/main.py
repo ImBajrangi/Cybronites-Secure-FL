@@ -42,13 +42,18 @@ worker = TrainingWorker()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown lifecycle."""
-    # Startup
     logger.info("═" * 60)
     logger.info("  Secure AI Training Platform — Starting")
     logger.info("═" * 60)
     
     init_db()
     worker.start()
+    
+    try:
+        from secure_training_platform.tools.auto_seed import seed_builtin_datasets
+        seed_builtin_datasets(vault)
+    except Exception as e:
+        logger.warning(f"Auto-seed skipped: {e}")
     
     logger.info(f"API server ready on http://{API_HOST}:{API_PORT}")
     logger.info("Training worker active — listening for jobs")

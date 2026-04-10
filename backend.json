@@ -1,77 +1,68 @@
-{"timestamp":"2026-04-11 01:43:19","level":"INFO","component":"GuardianServer","message":"Initializing Orchestrator (Rounds: 5)...","epoch":1775851999.381255}
-{"timestamp":"2026-04-11 01:43:19","level":"INFO","component":"GuardianBridge","message":"Launching Guardian Bridge on port 7880...","epoch":1775851999.40558}
-{"timestamp":"2026-04-11 01:43:19","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775851999.46173}
-{"timestamp":"2026-04-11 01:43:19","level":"INFO","component":"GuardianBridge","message":"Public IP fetched: 104.28.155.91","epoch":1775851999.865391}
-{"timestamp":"2026-04-11 01:43:19","level":"INFO","component":"GuardianBridge","message":"Distributed Coordinator initialized and linked to bridge.","epoch":1775851999.86559}
-{"timestamp":"2026-04-11 01:43:20","level":"INFO","component":"GuardianBridge","message":"IPC Log Listener thread started.","epoch":1775852000.1025321}
-{"timestamp":"2026-04-11 01:43:20","level":"INFO","component":"GuardianBridge","message":"Guardian Bridge Event Loop context captured.","epoch":1775852000.102721}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianServer","message":"Launching Flower Server on port 8095...","epoch":1775852001.38851}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775852001.54241}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db","epoch":1775852001.544564}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Dashboard connected. Total subscribers: 1","epoch":1775852001.546041}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775852001.5643892}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db","epoch":1775852001.564961}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Dashboard connected. Total subscribers: 2","epoch":1775852001.5657961}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775852001.580362}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db","epoch":1775852001.581377}
-{"timestamp":"2026-04-11 01:43:21","level":"INFO","component":"GuardianBridge","message":"Dashboard connected. Total subscribers: 3","epoch":1775852001.585081}
-{"timestamp":"2026-04-11 01:43:23","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775852003.248267}
-{"timestamp":"2026-04-11 01:43:23","level":"INFO","component":"GuardianBridge","message":"Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db","epoch":1775852003.251626}
-{"timestamp":"2026-04-11 01:43:23","level":"INFO","component":"GuardianBridge","message":"Dashboard connected. Total subscribers: 4","epoch":1775852003.253192}
-{"timestamp":"2026-04-11 01:43:23","level":"INFO","component":"GuardianClient","message":"Starting Guardian Client 0...","epoch":1775852003.7537541}
-{"timestamp":"2026-04-11 01:43:23","level":"INFO","component":"GuardianClient","message":"Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...","epoch":1775852003.842218}
-{"timestamp":"2026-04-11 01:43:24","level":"INFO","component":"GuardianClient","message":"Client 0 | Public IP: 104.28.155.91","epoch":1775852004.3124218}
-{"timestamp":"2026-04-11 01:43:26","level":"INFO","component":"GuardianClient","message":"Starting Guardian Client 1...","epoch":1775852006.04049}
-{"timestamp":"2026-04-11 01:43:26","level":"INFO","component":"GuardianClient","message":"Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...","epoch":1775852006.078995}
-{"timestamp":"2026-04-11 01:43:26","level":"INFO","component":"GuardianClient","message":"Client 1 | Public IP: 104.28.155.91","epoch":1775852006.527385}
-{"timestamp":"2026-04-11 01:43:26","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775852006.5585291,"type":"training","client_id":"0","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:26","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775852006.559972,"type":"training","client_id":"1","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852015.8567,"type":"privacy","client_id":"0","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852015.856725,"type":"privacy","client_id":"1","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"GuardianBridge","message":"Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.","epoch":1775852015.9259572}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"GuardianBridge","message":"Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.","epoch":1775852015.93295}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"SecureStrategy","message":"Round 1 Synced (Acc: 79.54%)","epoch":1775852015.9408472,"type":"round_sync","round":1,"accuracy":0.7954,"loss":0.24528871476650238}
-{"timestamp":"2026-04-11 01:43:35","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 1","epoch":1775852015.9514759,"type":"telemetry","round":1,"history_size":1}
-{"timestamp":"2026-04-11 01:43:37","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.3094","epoch":1775852017.382066,"type":"evaluation","client_id":"1","accuracy":0.3094}
-{"timestamp":"2026-04-11 01:43:37","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.3094","epoch":1775852017.391166,"type":"evaluation","client_id":"0","accuracy":0.3094}
-{"timestamp":"2026-04-11 01:43:37","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775852017.398099,"type":"training","client_id":"0","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:37","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775852017.399159,"type":"training","client_id":"1","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852026.723648,"type":"privacy","client_id":"0","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852026.723657,"type":"privacy","client_id":"1","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"GuardianBridge","message":"Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.","epoch":1775852026.740578}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"GuardianBridge","message":"Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.","epoch":1775852026.744704}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"SecureStrategy","message":"Round 2 Synced (Acc: 83.93%)","epoch":1775852026.7473931,"type":"round_sync","round":2,"accuracy":0.8393333333333333,"loss":0.5202054083347321}
-{"timestamp":"2026-04-11 01:43:46","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 2","epoch":1775852026.747844,"type":"telemetry","round":2,"history_size":2}
-{"timestamp":"2026-04-11 01:43:48","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.5578","epoch":1775852028.24813,"type":"evaluation","client_id":"0","accuracy":0.5578}
-{"timestamp":"2026-04-11 01:43:48","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.5578","epoch":1775852028.251714,"type":"evaluation","client_id":"1","accuracy":0.5578}
-{"timestamp":"2026-04-11 01:43:48","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775852028.264719,"type":"training","client_id":"1","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:48","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775852028.2674,"type":"training","client_id":"0","status":"STARTED"}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852039.641149,"type":"privacy","client_id":"0","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852039.67154,"type":"privacy","client_id":"1","dp_applied":true}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"GuardianBridge","message":"Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.","epoch":1775852039.721194}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"GuardianBridge","message":"Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.","epoch":1775852039.748954}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"SecureStrategy","message":"Round 3 Synced (Acc: 86.62%)","epoch":1775852039.7555358,"type":"round_sync","round":3,"accuracy":0.8661833333333333,"loss":0.1610560193657875}
-{"timestamp":"2026-04-11 01:43:59","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 3","epoch":1775852039.75597,"type":"telemetry","round":3,"history_size":3}
-{"timestamp":"2026-04-11 01:44:01","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.7947","epoch":1775852041.556364,"type":"evaluation","client_id":"1","accuracy":0.7947}
-{"timestamp":"2026-04-11 01:44:01","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.7947","epoch":1775852041.575177,"type":"evaluation","client_id":"0","accuracy":0.7947}
-{"timestamp":"2026-04-11 01:44:01","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775852041.591229,"type":"training","client_id":"1","status":"STARTED"}
-{"timestamp":"2026-04-11 01:44:01","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775852041.59252,"type":"training","client_id":"0","status":"STARTED"}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852051.7699819,"type":"privacy","client_id":"0","dp_applied":true}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852051.779291,"type":"privacy","client_id":"1","dp_applied":true}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"GuardianBridge","message":"Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.","epoch":1775852051.824718}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"GuardianBridge","message":"Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.","epoch":1775852051.870184}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"SecureStrategy","message":"Round 4 Synced (Acc: 88.13%)","epoch":1775852051.874989,"type":"round_sync","round":4,"accuracy":0.8813333333333333,"loss":0.19768383353948593}
-{"timestamp":"2026-04-11 01:44:11","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 4","epoch":1775852051.880877,"type":"telemetry","round":4,"history_size":4}
-{"timestamp":"2026-04-11 01:44:13","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.9098","epoch":1775852053.6610649,"type":"evaluation","client_id":"0","accuracy":0.9098}
-{"timestamp":"2026-04-11 01:44:13","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.9098","epoch":1775852053.671124,"type":"evaluation","client_id":"1","accuracy":0.9098}
-{"timestamp":"2026-04-11 01:44:13","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775852053.693444,"type":"training","client_id":"1","status":"STARTED"}
-{"timestamp":"2026-04-11 01:44:13","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775852053.69729,"type":"training","client_id":"0","status":"STARTED"}
-{"timestamp":"2026-04-11 01:44:25","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852065.93457,"type":"privacy","client_id":"0","dp_applied":true}
-{"timestamp":"2026-04-11 01:44:25","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775852065.933561,"type":"privacy","client_id":"1","dp_applied":true}
-{"timestamp":"2026-04-11 01:44:25","level":"INFO","component":"GuardianBridge","message":"Node 5937df415659497689e8d72b6e8f5f1c persisted to database with IP 104.28.155.91.","epoch":1775852065.970276}
-{"timestamp":"2026-04-11 01:44:25","level":"INFO","component":"GuardianBridge","message":"Node 6896935c4d4f4d5ab123c6f52601f631 persisted to database with IP 104.28.155.91.","epoch":1775852065.9813719}
-{"timestamp":"2026-04-11 01:44:25","level":"INFO","component":"SecureStrategy","message":"Round 5 Synced (Acc: 89.29%)","epoch":1775852065.99783,"type":"round_sync","round":5,"accuracy":0.8929333333333334,"loss":0.3049739897251129}
-{"timestamp":"2026-04-11 01:44:26","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 5","epoch":1775852066.0106292,"type":"telemetry","round":5,"history_size":5}
-{"timestamp":"2026-04-11 01:44:28","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.9489","epoch":1775852068.524106,"type":"evaluation","client_id":"0","accuracy":0.9489}
-{"timestamp":"2026-04-11 01:44:28","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.9489","epoch":1775852068.552941,"type":"evaluation","client_id":"1","accuracy":0.9489}
-{"timestamp":"2026-04-11 01:44:28","level":"INFO","component":"GuardianServer","message":"Training session complete. Maintaining dashboard bridge...","epoch":1775852068.5704901}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianServer","message":"Initializing Orchestrator (Rounds: 5)...","epoch":1775856956.137256}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Launching Guardian Bridge on port 7880...","epoch":1775856956.159483}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775856956.2314692}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Public IP fetched: 104.28.157.91","epoch":1775856956.683038}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Distributed Coordinator initialized and linked to bridge.","epoch":1775856956.6835048}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"IPC Log Listener thread started.","epoch":1775856956.719845}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Guardian Bridge Event Loop context captured.","epoch":1775856956.720114}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Model source code loaded from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/client/model.py","epoch":1775856956.922059}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Loaded 3 shards from /Users/sakhi/Code/FederatedLearningSystem-Ready/Cybronites/guardian.db","epoch":1775856956.922743}
+{"timestamp":"2026-04-11 03:05:56","level":"INFO","component":"GuardianBridge","message":"Dashboard connected. Total subscribers: 1","epoch":1775856956.923269}
+{"timestamp":"2026-04-11 03:05:58","level":"INFO","component":"GuardianServer","message":"Launching Flower Server on port 8095...","epoch":1775856958.142921}
+{"timestamp":"2026-04-11 03:05:58","level":"INFO","component":"GuardianClient","message":"Starting Guardian Client 0...","epoch":1775856958.45857}
+{"timestamp":"2026-04-11 03:05:58","level":"INFO","component":"GuardianClient","message":"Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...","epoch":1775856958.498677}
+{"timestamp":"2026-04-11 03:05:58","level":"INFO","component":"GuardianClient","message":"Client 0 | Public IP: 104.28.157.91","epoch":1775856958.868185}
+{"timestamp":"2026-04-11 03:06:00","level":"INFO","component":"GuardianClient","message":"Starting Guardian Client 1...","epoch":1775856960.4806652}
+{"timestamp":"2026-04-11 03:06:00","level":"INFO","component":"GuardianClient","message":"Connecting to Secure Server at 127.0.0.1:8095 (Attempt 1)...","epoch":1775856960.51851}
+{"timestamp":"2026-04-11 03:06:00","level":"INFO","component":"GuardianClient","message":"Client 1 | Public IP: 104.28.157.91","epoch":1775856960.9378371}
+{"timestamp":"2026-04-11 03:06:00","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775856960.963938,"type":"training","client_id":"0","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:00","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775856960.9653141,"type":"training","client_id":"1","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856968.5801501,"type":"privacy","client_id":"0","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856968.598816,"type":"privacy","client_id":"1","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"GuardianBridge","message":"Node c0124b883f274eba96637c081d577536 persisted to database with IP 104.28.157.91.","epoch":1775856968.623436}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"GuardianBridge","message":"Node 4c6a9ec5919e4f6b90e473ba585a8a61 persisted to database with IP 104.28.157.91.","epoch":1775856968.6253629}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 1","epoch":1775856968.6279821,"type":"telemetry","round":1,"history_size":1}
+{"timestamp":"2026-04-11 03:06:08","level":"INFO","component":"SecureStrategy","message":"Round 1 Synced (Acc: 76.84%)","epoch":1775856968.627858,"type":"round_sync","round":1,"accuracy":0.7683666666666666,"loss":0.31495414674282074}
+{"timestamp":"2026-04-11 03:06:09","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.2094","epoch":1775856969.650075,"type":"evaluation","client_id":"1","accuracy":0.2094}
+{"timestamp":"2026-04-11 03:06:09","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.2094","epoch":1775856969.6501381,"type":"evaluation","client_id":"0","accuracy":0.2094}
+{"timestamp":"2026-04-11 03:06:09","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775856969.654603,"type":"training","client_id":"1","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:09","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775856969.654568,"type":"training","client_id":"0","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856977.4149508,"type":"privacy","client_id":"0","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856977.42335,"type":"privacy","client_id":"1","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"GuardianBridge","message":"Node c0124b883f274eba96637c081d577536 persisted to database with IP 104.28.157.91.","epoch":1775856977.43823}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"GuardianBridge","message":"Node 4c6a9ec5919e4f6b90e473ba585a8a61 persisted to database with IP 104.28.157.91.","epoch":1775856977.441202}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"SecureStrategy","message":"Round 2 Synced (Acc: 83.43%)","epoch":1775856977.442862,"type":"round_sync","round":2,"accuracy":0.8343166666666666,"loss":0.2459482830017805}
+{"timestamp":"2026-04-11 03:06:17","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 2","epoch":1775856977.443407,"type":"telemetry","round":2,"history_size":2}
+{"timestamp":"2026-04-11 03:06:18","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.7382","epoch":1775856978.408628,"type":"evaluation","client_id":"0","accuracy":0.7382}
+{"timestamp":"2026-04-11 03:06:18","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.7382","epoch":1775856978.411325,"type":"evaluation","client_id":"1","accuracy":0.7382}
+{"timestamp":"2026-04-11 03:06:18","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775856978.4143941,"type":"training","client_id":"1","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:18","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775856978.414386,"type":"training","client_id":"0","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856985.104286,"type":"privacy","client_id":"0","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856985.104286,"type":"privacy","client_id":"1","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianBridge","message":"Node 4c6a9ec5919e4f6b90e473ba585a8a61 persisted to database with IP 104.28.157.91.","epoch":1775856985.112585}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianBridge","message":"Node c0124b883f274eba96637c081d577536 persisted to database with IP 104.28.157.91.","epoch":1775856985.114432}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"SecureStrategy","message":"Round 3 Synced (Acc: 86.53%)","epoch":1775856985.1160672,"type":"round_sync","round":3,"accuracy":0.8652666666666666,"loss":1.0503766685724258}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 3","epoch":1775856985.116173,"type":"telemetry","round":3,"history_size":3}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.9165","epoch":1775856985.959539,"type":"evaluation","client_id":"0","accuracy":0.9165}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.9165","epoch":1775856985.959587,"type":"evaluation","client_id":"1","accuracy":0.9165}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775856985.962605,"type":"training","client_id":"0","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:25","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775856985.963084,"type":"training","client_id":"1","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856992.938078,"type":"privacy","client_id":"0","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775856992.938138,"type":"privacy","client_id":"1","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"GuardianBridge","message":"Node 4c6a9ec5919e4f6b90e473ba585a8a61 persisted to database with IP 104.28.157.91.","epoch":1775856992.952522}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"GuardianBridge","message":"Node c0124b883f274eba96637c081d577536 persisted to database with IP 104.28.157.91.","epoch":1775856992.954562}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"SecureStrategy","message":"Round 4 Synced (Acc: 87.99%)","epoch":1775856992.956346,"type":"round_sync","round":4,"accuracy":0.8798666666666666,"loss":0.13777953386306763}
+{"timestamp":"2026-04-11 03:06:32","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 4","epoch":1775856992.956743,"type":"telemetry","round":4,"history_size":4}
+{"timestamp":"2026-04-11 03:06:33","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.9502","epoch":1775856993.848028,"type":"evaluation","client_id":"1","accuracy":0.9502}
+{"timestamp":"2026-04-11 03:06:33","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.9502","epoch":1775856993.848489,"type":"evaluation","client_id":"0","accuracy":0.9502}
+{"timestamp":"2026-04-11 03:06:33","level":"INFO","component":"GuardianClient","message":"Client 1 | Training locally...","epoch":1775856993.8509288,"type":"training","client_id":"1","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:33","level":"INFO","component":"GuardianClient","message":"Client 0 | Training locally...","epoch":1775856993.851021,"type":"training","client_id":"0","status":"STARTED"}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"GuardianClient","message":"Client 0 | Applying DP Noise (\u03b5-privacy)...","epoch":1775857000.405256,"type":"privacy","client_id":"0","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"GuardianClient","message":"Client 1 | Applying DP Noise (\u03b5-privacy)...","epoch":1775857000.405493,"type":"privacy","client_id":"1","dp_applied":true}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"GuardianBridge","message":"Node 4c6a9ec5919e4f6b90e473ba585a8a61 persisted to database with IP 104.28.157.91.","epoch":1775857000.411725}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"GuardianBridge","message":"Node c0124b883f274eba96637c081d577536 persisted to database with IP 104.28.157.91.","epoch":1775857000.413256}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"SecureStrategy","message":"Round 5 Synced (Acc: 89.08%)","epoch":1775857000.414592,"type":"round_sync","round":5,"accuracy":0.8907833333333333,"loss":0.3964754194021225}
+{"timestamp":"2026-04-11 03:06:40","level":"INFO","component":"GuardianBridge","message":"Broadcasting STAT_UPDATE. Accuracy History Size: 5","epoch":1775857000.4146528,"type":"telemetry","round":5,"history_size":5}
+{"timestamp":"2026-04-11 03:06:41","level":"INFO","component":"GuardianClient","message":"Client 0 | Accuracy: 0.9635","epoch":1775857001.2578702,"type":"evaluation","client_id":"0","accuracy":0.9635}
+{"timestamp":"2026-04-11 03:06:41","level":"INFO","component":"GuardianClient","message":"Client 1 | Accuracy: 0.9635","epoch":1775857001.2578838,"type":"evaluation","client_id":"1","accuracy":0.9635}
+{"timestamp":"2026-04-11 03:06:41","level":"INFO","component":"GuardianServer","message":"Training session complete. Maintaining dashboard bridge...","epoch":1775857001.260983}
